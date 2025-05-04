@@ -94,6 +94,79 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+// @access  Private
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.interests = req.body.interests || user.interests;
+    user.skills = req.body.skills || user.skills;
+    user.availableTimes = req.body.availableTimes || user.availableTimes;
+    user.activityLevel = req.body.activityLevel || user.activityLevel;
+    user.preferredPartnerType = req.body.preferredPartnerType || user.preferredPartnerType;
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      interests: updatedUser.interests,
+      skills: updatedUser.skills,
+      availableTimes: updatedUser.availableTimes,
+      activityLevel: updatedUser.activityLevel,
+      preferredPartnerType: updatedUser.preferredPartnerType,
+      isAdmin: updatedUser.isAdmin,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Get interest categories
+// @route   GET /api/users/interests
+// @access  Public
+const getInterestCategories = asyncHandler(async (req, res) => {
+  const interestCategories = [
+    {
+      name: 'Fitness',
+      interests: ['Running', 'Weight Training', 'Yoga', 'Swimming', 'Cycling', 'Hiking', 'Martial Arts']
+    },
+    {
+      name: 'Learning',
+      interests: ['Programming', 'Foreign Languages', 'Data Science', 'Art', 'History', 'Mathematics', 'Science']
+    },
+    {
+      name: 'Creative',
+      interests: ['Writing', 'Drawing', 'Photography', 'Music', 'Painting', 'Sculpting', 'Digital Art']
+    },
+    {
+      name: 'Professional',
+      interests: ['Networking', 'Public Speaking', 'Leadership', 'Project Management', 'Marketing', 'Entrepreneurship']
+    },
+    {
+      name: 'Wellness',
+      interests: ['Meditation', 'Journaling', 'Reading', 'Healthy Eating', 'Sleep Improvement', 'Stress Management']
+    },
+    {
+      name: 'Productivity',
+      interests: ['Time Management', 'Goal Setting', 'Habit Building', 'Focus Improvement', 'Organization']
+    }
+  ];
+
+  res.json(interestCategories);
+});
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, JWT_SECRET, {
@@ -105,4 +178,6 @@ module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
+  updateUserProfile,
+  getInterestCategories,
 }; 
