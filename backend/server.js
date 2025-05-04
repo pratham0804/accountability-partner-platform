@@ -1,18 +1,29 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
-const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+// Temporary hardcoded values for testing
+const MONGO_URI = "mongodb+srv://prathameshjangle7666:ZNGXILfOwQbDXkPa@cluster0.sbebkea.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const JWT_SECRET = "Nl+tE4qw2IWfgYiC.TsKHCLlCiziOCXTZZLVEiQ==.iqaKTsr6IE2MkuD20OqZKA==";
+const PORT = 5000;
+
+// Debug
+console.log('Using MongoDB URI:', MONGO_URI);
+
+// Connect to MongoDB
+const mongoose = require('mongoose');
+mongoose.connect(MONGO_URI)
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log('MongoDB Connection Error: ', err));
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
-
-// Load environment variables
-dotenv.config();
-
-// Connect to MongoDB
-connectDB();
 
 // Initialize express app
 const app = express();
@@ -36,7 +47,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 }); 
