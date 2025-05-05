@@ -25,6 +25,7 @@ mongoose.connect(MONGO_URI)
 // Routes
 const userRoutes = require('./routes/userRoutes');
 const matchRoutes = require('./routes/matchRoutes');
+const partnershipRoutes = require('./routes/partnershipRoutes');
 
 // Initialize express app
 const app = express();
@@ -43,6 +44,7 @@ app.get('/', (req, res) => {
 // Mount routes
 app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
+app.use('/api/partnerships', partnershipRoutes);
 
 // Error handling middleware
 app.use(notFound);
