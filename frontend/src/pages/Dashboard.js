@@ -66,6 +66,12 @@ const Dashboard = () => {
           <p>Discover accountability partners with similar interests</p>
           <Link to="/matches" className="btn">Find Partners</Link>
         </div>
+
+        <div className="dashboard-card">
+          <h3>Your Partnerships</h3>
+          <p>Manage your active partnerships and agreements</p>
+          <Link to="/partnerships" className="btn">View Partnerships</Link>
+        </div>
       </section>
     </div>
   );

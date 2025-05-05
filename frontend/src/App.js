@@ -7,6 +7,9 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Matches from './pages/Matches';
+import Partnerships from './pages/Partnerships';
+import PartnershipDetails from './pages/PartnershipDetails';
+import AgreementForm from './pages/AgreementForm';
 import './App.css';
 
 function App() {
@@ -22,6 +25,9 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/matches" element={<Matches />} />
+            <Route path="/partnerships" element={<Partnerships />} />
+            <Route path="/partnerships/:id" element={<PartnershipDetails />} />
+            <Route path="/partnerships/:id/agreement" element={<AgreementForm />} />
           </Routes>
         </main>
       </div>

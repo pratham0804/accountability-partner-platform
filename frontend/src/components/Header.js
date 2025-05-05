@@ -35,6 +35,9 @@ const Header = () => {
               <Link to="/matches">Find Partners</Link>
             </li>
             <li>
+              <Link to="/partnerships">Partnerships</Link>
+            </li>
+            <li>
               <Link to="/profile">Profile</Link>
             </li>
             <li>
