@@ -1,11 +1,13 @@
-# Node modules
+# Dependency directories
 node_modules/
+jspm_packages/
 
 # Environment variables
 .env
-
-# Build files
-/frontend/build
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
 logs
@@ -14,23 +16,37 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Dependencies
-.pnp
-.pnp.js
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# Testing
-/coverage
+# Optional npm cache directory
+.npm
 
-# Production
-/build
+# Optional eslint cache
+.eslintcache
 
-# Misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Optional REPL history
+.node_repl_history
 
-# IDE files
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Production build files
+build/
+dist/
+
+# IDE
 .idea/
-.vscode/ 
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db 

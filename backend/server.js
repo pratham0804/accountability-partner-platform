@@ -26,6 +26,7 @@ mongoose.connect(MONGO_URI)
 const userRoutes = require('./routes/userRoutes');
 const matchRoutes = require('./routes/matchRoutes');
 const partnershipRoutes = require('./routes/partnershipRoutes');
+const walletRoutes = require('./routes/walletRoutes');
 
 // Initialize express app
 const app = express();
@@ -41,10 +42,32 @@ app.get('/', (req, res) => {
   res.send('Accountability Partner API is running');
 });
 
+// Test route to debug endpoint issues
+app.get('/api/test', (req, res) => {
+  res.json({
+    message: 'Test endpoint is working',
+    routes: {
+      user: true,
+      match: true,
+      partnership: true,
+      wallet: true
+    }
+  });
+});
+
+// Special test for wallet routes
+app.get('/api/test/wallet', (req, res) => {
+  res.json({
+    message: 'Wallet test endpoint is working',
+    walletRoutes: Object.keys(walletRoutes.stack.map(r => r.route ? r.route.path : 'middleware'))
+  });
+});
+
 // Mount routes
 app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/partnerships', partnershipRoutes);
+app.use('/api/wallet', walletRoutes);
 
 // Error handling middleware
 app.use(notFound);

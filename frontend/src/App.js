@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Register from './pages/Register';
@@ -10,6 +12,7 @@ import Matches from './pages/Matches';
 import Partnerships from './pages/Partnerships';
 import PartnershipDetails from './pages/PartnershipDetails';
 import AgreementForm from './pages/AgreementForm';
+import Wallet from './pages/Wallet';
 import './App.css';
 
 function App() {
@@ -28,8 +31,10 @@ function App() {
             <Route path="/partnerships" element={<Partnerships />} />
             <Route path="/partnerships/:id" element={<PartnershipDetails />} />
             <Route path="/partnerships/:id/agreement" element={<AgreementForm />} />
+            <Route path="/wallet" element={<Wallet />} />
           </Routes>
         </main>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       </div>
     </Router>
   );

@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import EscrowFundForm from '../components/EscrowFundForm';
+import EscrowReleaseForm from '../components/EscrowReleaseForm';
 
 const PartnershipDetails = () => {
   const [partnership, setPartnership] = useState(null);
   const [partner, setPartner] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showEscrowForm, setShowEscrowForm] = useState(false);
+  const [showReleaseForm, setShowReleaseForm] = useState(false);
+  const [transactionsChecked, setTransactionsChecked] = useState(false);
+  const [fundsAlreadyReleased, setFundsAlreadyReleased] = useState(false);
   
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,7 +33,9 @@ const PartnershipDetails = () => {
           },
         };
 
-        const { data } = await axios.get(`/api/partnerships/${id}`, config);
+        console.log('Fetching partnership with ID:', id);
+        const { data } = await axios.get(`http://localhost:5000/api/partnerships/${id}`, config);
+        console.log('Partnership data:', data);
         setPartnership(data);
         
         // Determine who is the partner
@@ -40,6 +48,7 @@ const PartnershipDetails = () => {
         
         setIsLoading(false);
       } catch (error) {
+        console.error('Error fetching partnership:', error);
         setError(
           error.response && error.response.data.message
             ? error.response.data.message
@@ -52,6 +61,55 @@ const PartnershipDetails = () => {
     fetchPartnership();
   }, [id, navigate]);
 
+  // Check if funds have already been released for this partnership
+  useEffect(() => {
+    if (!partnership || transactionsChecked) {
+      return;
+    }
+
+    const checkTransactions = async () => {
+      try {
+        const userInfo = JSON.parse(localStorage.getItem('user'));
+        if (!userInfo || !userInfo.token) {
+          return;
+        }
+
+        // Get all transactions to check if release has already happened
+        const response = await axios.get(
+          `http://localhost:5000/api/wallet/transactions`,
+          { headers: { Authorization: `Bearer ${userInfo.token}` } }
+        );
+
+        // Look for reward or penalty transactions related to this partnership
+        const releaseTransactions = response.data.filter(
+          tx => (tx.type === 'reward' || tx.type === 'penalty') && 
+                tx.partnership === id
+        );
+
+        if (releaseTransactions.length > 0) {
+          console.log('Found previous release transactions:', releaseTransactions);
+          setFundsAlreadyReleased(true);
+        }
+        
+        setTransactionsChecked(true);
+      } catch (err) {
+        console.error('Error checking transactions:', err);
+      }
+    };
+
+    checkTransactions();
+  }, [partnership, id, transactionsChecked]);
+
+  const handleFundsTransferred = (data) => {
+    setPartnership(data.partnership);
+    setShowEscrowForm(false);
+  };
+
+  const handleFundsReleased = (data) => {
+    setPartnership(data.partnership);
+    setShowReleaseForm(false);
+  };
+
   if (isLoading) {
     return <div className="loading">Loading partnership details...</div>;
   }
@@ -63,6 +121,20 @@ const PartnershipDetails = () => {
   if (!partnership) {
     return <div className="not-found">Partnership not found</div>;
   }
+
+  // Determine if we can add funds to escrow
+  const canAddToEscrow = partnership.status === 'accepted' && 
+                         (!partnership.agreement?.financialStake || 
+                          partnership.agreement?.financialStake?.amount <= 0);
+
+  // Determine if we can release funds from escrow
+  const canReleaseFromEscrow = partnership.status === 'accepted' && 
+                              partnership.agreement?.financialStake && 
+                              partnership.agreement?.financialStake?.amount > 0 &&
+                              !fundsAlreadyReleased;
+
+  // Check for completed partnerships or no escrow balance to prevent multiple fund releases
+  const hasEscrowCompleted = partnership.status === 'completed' || fundsAlreadyReleased; // Either partnership is completed or funds already released
 
   return (
     <div className="partnership-details-container">
@@ -80,6 +152,7 @@ const PartnershipDetails = () => {
         <div className="card partner-card">
           <h2>Partner Information</h2>
           <div className="partner-info">
+            <p><strong>Partnership ID:</strong> {id}</p>
             <p><strong>Name:</strong> {partner?.name}</p>
             <p><strong>Activity Level:</strong> {partner?.activityLevel.charAt(0).toUpperCase() + partner?.activityLevel.slice(1)}</p>
             
@@ -151,6 +224,33 @@ const PartnershipDetails = () => {
               <Link to={`/partnerships/${id}/agreement`} className="btn">
                 Edit Agreement
               </Link>
+              
+              {canAddToEscrow && (
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => setShowEscrowForm(true)}
+                >
+                  Add Financial Stake
+                </button>
+              )}
+              
+              {canReleaseFromEscrow && !hasEscrowCompleted && (
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => setShowReleaseForm(true)}
+                >
+                  Complete Agreement
+                </button>
+              )}
+              
+              {hasEscrowCompleted && (
+                <button 
+                  className="btn btn-secondary" 
+                  disabled={true}
+                >
+                  Agreement Completed
+                </button>
+              )}
             </div>
           </div>
         ) : (
@@ -161,6 +261,22 @@ const PartnershipDetails = () => {
               Create Agreement
             </Link>
           </div>
+        )}
+        
+        {/* Escrow Fund Form */}
+        {showEscrowForm && (
+          <EscrowFundForm 
+            partnershipId={id}
+            onFundsTransferred={handleFundsTransferred}
+          />
+        )}
+        
+        {/* Escrow Release Form */}
+        {showReleaseForm && (
+          <EscrowReleaseForm 
+            partnershipId={id}
+            onFundsReleased={handleFundsReleased}
+          />
         )}
       </div>
     </div>
