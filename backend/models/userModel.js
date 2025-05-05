@@ -54,6 +54,11 @@ const userSchema = mongoose.Schema(
   }
 );
 
+// Create indexes for faster matching queries
+userSchema.index({ interests: 1 });
+userSchema.index({ skills: 1 });
+userSchema.index({ activityLevel: 1 });
+
 // Encrypt password using bcrypt
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
