@@ -6,6 +6,7 @@ const Matches = () => {
   const [matches, setMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,9 +41,49 @@ const Matches = () => {
     fetchMatches();
   }, [navigate]);
 
-  const handleSendRequest = (matchIndex) => {
-    // This will be implemented in the next phase (Partnership Formation)
-    alert('Partnership request feature will be implemented in the next phase');
+  const handleSendRequest = async (matchIndex) => {
+    try {
+      setError('');
+      setSuccessMessage('');
+      
+      const match = matches[matchIndex];
+      if (!match || !match._id) {
+        setError('Unable to identify selected match');
+        return;
+      }
+      
+      const userInfo = JSON.parse(localStorage.getItem('user'));
+      
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      
+      await axios.post('/api/partnerships', { recipientId: match._id }, config);
+      
+      setSuccessMessage('Partnership request sent successfully');
+      
+      // Disable the button for this match
+      const updatedMatches = [...matches];
+      updatedMatches[matchIndex] = {
+        ...updatedMatches[matchIndex],
+        requestSent: true
+      };
+      setMatches(updatedMatches);
+      
+      // Redirect to partnerships page after a short delay
+      setTimeout(() => {
+        navigate('/partnerships');
+      }, 2000);
+    } catch (error) {
+      setError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : 'Failed to send partnership request'
+      );
+    }
   };
 
   if (isLoading) {
@@ -57,6 +98,7 @@ const Matches = () => {
       </section>
 
       {error && <div className="error-message">{error}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
 
       {matches.length === 0 ? (
         <div className="no-matches">
@@ -141,8 +183,9 @@ const Matches = () => {
                 <button 
                   className="btn btn-primary btn-block"
                   onClick={() => handleSendRequest(index)}
+                  disabled={match.requestSent}
                 >
-                  Request Partnership
+                  {match.requestSent ? 'Request Sent' : 'Request Partnership'}
                 </button>
               </div>
             </div>
