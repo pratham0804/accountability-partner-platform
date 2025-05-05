@@ -58,7 +58,7 @@ const getPotentialMatches = asyncHandler(async (req, res) => {
 
   // Find potential matches
   const potentialMatches = await User.find(query)
-    .select('interests skills activityLevel -_id') // Keep identity anonymous
+    .select('_id interests skills activityLevel') // Include ID but keep other identity details private
     .limit(20);
   
   // Calculate compatibility score for each match
@@ -92,6 +92,7 @@ const getPotentialMatches = asyncHandler(async (req, res) => {
     
     // Return match with score and matching items
     return {
+      _id: match._id, // Include the user ID for partnership requests
       score,
       matchingInterests,
       totalMatchingInterests: matchingInterests.length,
