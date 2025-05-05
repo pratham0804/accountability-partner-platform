@@ -652,6 +652,323 @@ ul {
   border-top: 1px solid #e5e7eb;
 }
 
+/* Partnerships Page */
+.partnerships-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.partnerships-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.partnerships-header h1 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.partnerships-header p {
+  color: #4b5563;
+}
+
+.partnerships-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #4b5563;
+  transition: all 0.2s;
+}
+
+.tab-button.active {
+  background: #4f46e5;
+  color: white;
+}
+
+.no-partnerships {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.partnerships-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 30px;
+}
+
+.partnership-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.partnership-header {
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.partnership-header h3 {
+  font-size: 1.2rem;
+  color: #1f2937;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-accepted {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-completed {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-cancelled {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.partnership-body {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.partner-info {
+  margin-bottom: 20px;
+}
+
+.partner-info p {
+  margin: 5px 0;
+}
+
+.partner-interests, .partner-skills {
+  margin-top: 10px;
+}
+
+.partnership-actions {
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 10px;
+}
+
+/* Partnership Details Page */
+.partnership-details-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.partnership-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-content h1 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.partnership-details-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+}
+
+.card h2 {
+  font-size: 1.4rem;
+  color: #1f2937;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.agreement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.agreement-header h3 {
+  font-size: 1.2rem;
+  color: #1f2937;
+  margin: 0;
+}
+
+.agreement-dates {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.agreement-description {
+  margin-bottom: 20px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.agreement-goals h4, .financial-stake h4 {
+  font-size: 1.1rem;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.goals-list {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.goals-list li {
+  margin-bottom: 5px;
+  color: #4b5563;
+}
+
+.agreement-created {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.agreement-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Agreement Form */
+.agreement-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.agreement-form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.agreement-form-header h1 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.agreement-form-header p {
+  color: #4b5563;
+}
+
+.agreement-form {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.goal-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon.remove {
+  color: #b91c1c;
+}
+
+.btn-icon.remove:hover {
+  background: #fee2e2;
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.date-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.help-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 15px;
+}
+
+.financial-stake-inputs {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 20px;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
 /* Responsive Media Queries */
 @media (max-width: 768px) {
   .hero h1 {
@@ -671,6 +988,18 @@ ul {
   }
   
   .matches-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .partnerships-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .partnership-details-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .date-inputs, .financial-stake-inputs {
     grid-template-columns: 1fr;
   }
 } 
