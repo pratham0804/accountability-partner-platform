@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Dashboard = () => {
@@ -58,13 +58,13 @@ const Dashboard = () => {
         <div className="dashboard-card">
           <h3>Your Profile</h3>
           <p>Complete your profile to find better matches</p>
-          <button className="btn">Update Profile</button>
+          <Link to="/profile" className="btn">Update Profile</Link>
         </div>
 
         <div className="dashboard-card">
           <h3>Find Partners</h3>
           <p>Discover accountability partners with similar interests</p>
-          <button className="btn">Find Partners</button>
+          <Link to="/matches" className="btn">Find Partners</Link>
         </div>
       </section>
     </div>
