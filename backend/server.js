@@ -24,6 +24,7 @@ mongoose.connect(MONGO_URI)
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
+const matchRoutes = require('./routes/matchRoutes');
 
 // Initialize express app
 const app = express();
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
 
 // Mount routes
 app.use('/api/users', userRoutes);
+app.use('/api/matches', matchRoutes);
 
 // Error handling middleware
 app.use(notFound);
