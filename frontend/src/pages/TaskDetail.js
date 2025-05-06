@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
+import ProofSubmission from '../components/ProofSubmission';
+import ProofDisplay from '../components/ProofDisplay';
+import ProofVerification from '../components/ProofVerification';
 
 const TaskDetail = () => {
   const [task, setTask] = useState(null);
@@ -10,6 +13,8 @@ const TaskDetail = () => {
   const [error, setError] = useState('');
   const [completionNotes, setCompletionNotes] = useState('');
   const [showCompletionForm, setShowCompletionForm] = useState(false);
+  const [proofs, setProofs] = useState([]);
+  const [loadingProofs, setLoadingProofs] = useState(false);
 
   const { taskId } = useParams();
   const navigate = useNavigate();
@@ -45,12 +50,38 @@ const TaskDetail = () => {
     fetchTaskDetails();
   }, [taskId, navigate]);
 
+  useEffect(() => {
+    const fetchProofs = async () => {
+      if (!taskId) return;
+      
+      try {
+        setLoadingProofs(true);
+        
+        const userInfo = JSON.parse(localStorage.getItem('user'));
+        if (!userInfo) return;
+        
+        const response = await axios.get(
+          `http://localhost:5000/api/proofs/task/${taskId}`,
+          { headers: { Authorization: `Bearer ${userInfo.token}` } }
+        );
+        
+        setProofs(response.data);
+        setLoadingProofs(false);
+      } catch (error) {
+        console.error('Error fetching proofs:', error);
+        setLoadingProofs(false);
+      }
+    };
+    
+    fetchProofs();
+  }, [taskId]);
+
   const isCreator = task?.creator?._id === JSON.parse(localStorage.getItem('user'))?._id;
   const isAssignee = task?.assignee?._id === JSON.parse(localStorage.getItem('user'))?._id;
   
   const isCompletable = (task?.status === 'pending' || task?.status === 'in_progress') && isAssignee;
-  const isVerifiable = task?.status === 'completed' && isCreator && !isAssignee;
-  const canBeFailed = (task?.status === 'pending' || task?.status === 'in_progress') && isCreator && !isAssignee;
+  const isVerifiable = task?.status === 'completed' && isCreator;
+  const canBeFailed = (task?.status === 'pending' || task?.status === 'in_progress') && isCreator;
 
   const handleCompleteTask = async (e) => {
     e.preventDefault();
@@ -167,6 +198,36 @@ const TaskDetail = () => {
         return 'priority-low';
       default:
         return '';
+    }
+  };
+
+  const handleProofSubmitted = (newProof) => {
+    setProofs([newProof, ...proofs.filter(p => p._id !== newProof._id)]);
+    
+    if (task && task.status !== 'completed') {
+      setTask({
+        ...task,
+        status: 'completed',
+        completedAt: new Date()
+      });
+    }
+  };
+
+  const handleProofVerified = (updatedProof) => {
+    setProofs(proofs.map(p => p._id === updatedProof._id ? updatedProof : p));
+    
+    if (task && task.status !== 'verified' && updatedProof.verificationStatus === 'approved') {
+      setTask({
+        ...task,
+        status: 'verified',
+        verifiedAt: new Date()
+      });
+    } else if (task && updatedProof.verificationStatus === 'rejected') {
+      setTask({
+        ...task,
+        status: 'in_progress',
+        completedAt: null
+      });
     }
   };
 
@@ -288,13 +349,10 @@ const TaskDetail = () => {
               </button>
             )}
             
-            {isVerifiable && (
-              <button 
-                className="btn btn-success" 
-                onClick={handleVerifyTask}
-              >
-                Verify Completion
-              </button>
+            {isVerifiable && proofs.length === 0 && (
+              <div className="verification-note">
+                <p>This task has been marked as completed, but no proof has been submitted yet.</p>
+              </div>
             )}
             
             {canBeFailed && (
@@ -315,6 +373,44 @@ const TaskDetail = () => {
               </button>
             )}
           </div>
+        </div>
+
+        <div className="proof-section">
+          {isAssignee && (task.status === 'pending' || task.status === 'in_progress' || task.status === 'completed') && (
+            <ProofSubmission
+              taskId={taskId}
+              onProofSubmitted={handleProofSubmitted}
+            />
+          )}
+          
+          {isCreator && task.status === 'completed' && proofs.length > 0 && (
+            <ProofVerification
+              proof={proofs[0]}
+              onVerificationComplete={handleProofVerified}
+            />
+          )}
+          
+          {proofs.length > 0 && !(isCreator && task.status === 'completed') && (
+            <div className="existing-proofs">
+              <h3>Submitted Proof</h3>
+              <ProofDisplay proof={proofs[0]} />
+            </div>
+          )}
+          
+          {loadingProofs && (
+            <div className="loading-proofs">Loading proof submissions...</div>
+          )}
+          
+          {!loadingProofs && proofs.length === 0 && (
+            <div className="no-proofs">
+              <h3>No Proof Submitted</h3>
+              {isAssignee ? (
+                <p>You haven't submitted proof for this task yet.</p>
+              ) : (
+                <p>No proof has been submitted for this task yet.</p>
+              )}
+            </div>
+          )}
         </div>
 
         {showCompletionForm && (
