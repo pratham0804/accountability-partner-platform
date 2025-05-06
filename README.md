@@ -115,7 +115,7 @@ A web application that connects users with accountability partners to help achie
 ## API Endpoints
 
 ### Authentication
-- `POST /api/users/register` - Register a new user
+- `POST /api/users/register` - Register new user
 - `POST /api/users/login` - Login and get token
 
 ### Partnerships
