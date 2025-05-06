@@ -16,6 +16,7 @@ import Wallet from './pages/Wallet';
 import Tasks from './pages/Tasks';
 import TaskDetail from './pages/TaskDetail';
 import MyTasks from './pages/MyTasks';
+import ProofVerificationQueue from './pages/ProofVerificationQueue';
 import './App.css';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
             <Route path="/partnerships/:partnershipId/tasks" element={<Tasks />} />
             <Route path="/tasks/:taskId" element={<TaskDetail />} />
             <Route path="/my-tasks" element={<MyTasks />} />
+            <Route path="/proof-verification" element={<ProofVerificationQueue />} />
           </Routes>
         </main>
         <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
