@@ -38,6 +38,9 @@ const Header = () => {
               <Link to="/partnerships">Partnerships</Link>
             </li>
             <li>
+              <Link to="/my-tasks">My Tasks</Link>
+            </li>
+            <li>
               <Link to="/wallet">Wallet</Link>
             </li>
             <li>
