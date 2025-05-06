@@ -1183,4 +1183,301 @@ textarea {
 .info-text {
   margin-top: 15px;
   color: #666;
+}
+
+/* Task Management Styles */
+
+/* Task Item */
+.task-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, a0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.task-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-info h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.task-meta {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.task-priority, .task-status, .task-recurring {
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.task-description {
+  margin: 10px 0;
+  color: #555;
+}
+
+.task-details {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.task-details p {
+  margin: 4px 0;
+}
+
+.task-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 16px;
+  min-width: 120px;
+}
+
+/* Status Colors */
+.status-pending {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.status-in-progress {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.status-completed {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-verified {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.status-failed {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Priority Colors */
+.priority-high {
+  background-color: #ffcdd2;
+  color: #c62828;
+}
+
+.priority-medium {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.priority-low {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Task Form */
+.task-form {
+  margin-bottom: 24px;
+  padding: 20px;
+}
+
+.task-form h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.assignee-info {
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Task List */
+.task-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-weight: 500;
+  min-width: 70px;
+}
+
+.filter-group select {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.tasks-container {
+  margin-top: 16px;
+}
+
+.no-tasks {
+  text-align: center;
+  padding: 24px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* Task Detail Page */
+.task-detail-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.task-detail-header {
+  margin-bottom: 24px;
+}
+
+.back-link {
+  margin-bottom: 12px;
+}
+
+.task-detail-header h1 {
+  margin: 8px 0;
+}
+
+.task-detail-card {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.info-group h3, .task-tags h3, .task-description-section h3, .task-completion-notes h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-item {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.info-item label {
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.relative-time {
+  font-size: 0.8rem;
+  color: #777;
+  margin-left: 8px;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background: #f0f0f0;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.task-description {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.empty-description {
+  color: #999;
+  font-style: italic;
+}
+
+.task-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.completion-form {
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.completion-form h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+/* My Tasks Page */
+.my-tasks-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.my-tasks-header {
+  margin-bottom: 24px;
+}
+
+.tasks-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 24px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  background: #f0f0f0;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  font-weight: 500;
+}
+
+.tab-button.active {
+  background: #007bff;
+  color: white;
 } 
