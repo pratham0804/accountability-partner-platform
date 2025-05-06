@@ -30,6 +30,12 @@ A web application that connects users with accountability partners to help achie
 - Track task completion
 - Proof submission and verification
 
+### Proof Submission & Verification
+- Submit proofs for completed tasks
+- Multiple proof formats (text, image, link, file)
+- Verification by accountability partners
+- Approval/rejection workflow with comments
+
 ## Technical Stack
 
 ### Backend
@@ -130,4 +136,45 @@ A web application that connects users with accountability partners to help achie
 - `POST /api/wallet/withdraw` - Withdraw funds
 - `POST /api/wallet/escrow/:partnershipId` - Transfer to escrow
 - `POST /api/wallet/escrow/release/:partnershipId` - Release from escrow
-- `GET /api/wallet/transactions` - Get transaction history 
+- `GET /api/wallet/transactions` - Get transaction history
+
+### Tasks
+- `POST /api/tasks` - Create a new task
+- `GET /api/tasks/partnership/:partnershipId` - Get tasks for a partnership
+- `GET /api/tasks/assigned` - Get tasks assigned to user
+- `GET /api/tasks/created` - Get tasks created by user
+- `GET /api/tasks/:id` - Get task details
+- `PUT /api/tasks/:id` - Update task
+- `DELETE /api/tasks/:id` - Delete task
+- `PUT /api/tasks/:id/complete` - Mark task as complete
+- `PUT /api/tasks/:id/verify` - Verify task completion
+- `PUT /api/tasks/:id/fail` - Mark task as failed
+
+### Proofs
+- `POST /api/proofs` - Submit proof for a task
+- `GET /api/proofs/task/:taskId` - Get proofs for a task
+- `GET /api/proofs/submitted` - Get proofs submitted by user
+- `GET /api/proofs/pending` - Get proofs pending verification
+- `GET /api/proofs/:id` - Get proof details
+- `PUT /api/proofs/:id/verify` - Verify proof
+- `PUT /api/proofs/:id/reject` - Reject proof
+
+## Development Progress
+
+- [x] Project Setup
+- [x] User Authentication System
+- [x] User Profile & Interest Management
+- [x] Partner Matching System
+- [x] Partnership Formation & Agreement System
+- [x] Wallet & Escrow System
+- [x] Task Management System
+- [x] Proof Submission & Verification System
+- [ ] Third-Party Integration for Proof Verification
+- [ ] Chat & Communication System
+- [ ] Content Moderation System
+- [ ] Agreement Resolution & Reward/Penalty System
+- [ ] Dashboard & Statistics
+- [ ] Notifications System
+- [ ] Admin Panel
+- [ ] UI Enhancement & Responsiveness
+- [ ] Final Testing & Deployment Preparation 
