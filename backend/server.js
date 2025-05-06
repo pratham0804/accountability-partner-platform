@@ -27,6 +27,7 @@ const userRoutes = require('./routes/userRoutes');
 const matchRoutes = require('./routes/matchRoutes');
 const partnershipRoutes = require('./routes/partnershipRoutes');
 const walletRoutes = require('./routes/walletRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 // Initialize express app
 const app = express();
@@ -50,7 +51,8 @@ app.get('/api/test', (req, res) => {
       user: true,
       match: true,
       partnership: true,
-      wallet: true
+      wallet: true,
+      task: true
     }
   });
 });
@@ -68,6 +70,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/partnerships', partnershipRoutes);
 app.use('/api/wallet', walletRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Error handling middleware
 app.use(notFound);
