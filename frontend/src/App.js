@@ -13,6 +13,9 @@ import Partnerships from './pages/Partnerships';
 import PartnershipDetails from './pages/PartnershipDetails';
 import AgreementForm from './pages/AgreementForm';
 import Wallet from './pages/Wallet';
+import Tasks from './pages/Tasks';
+import TaskDetail from './pages/TaskDetail';
+import MyTasks from './pages/MyTasks';
 import './App.css';
 
 function App() {
@@ -32,6 +35,9 @@ function App() {
             <Route path="/partnerships/:id" element={<PartnershipDetails />} />
             <Route path="/partnerships/:id/agreement" element={<AgreementForm />} />
             <Route path="/wallet" element={<Wallet />} />
+            <Route path="/partnerships/:partnershipId/tasks" element={<Tasks />} />
+            <Route path="/tasks/:taskId" element={<TaskDetail />} />
+            <Route path="/my-tasks" element={<MyTasks />} />
           </Routes>
         </main>
         <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
