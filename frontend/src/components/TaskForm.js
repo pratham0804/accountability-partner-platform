@@ -16,25 +16,38 @@ const TaskForm = ({ partnershipId, partner, onTaskCreated, taskToEdit }) => {
     deadline: getEndOfDay(), // Set to end of current day
     recurringType: 'none',
     priority: 'medium',
-    tags: ''
+    tags: '',
+    assigneeType: 'self' // Default to self-assignment
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Get current user info on component mount
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('user'));
+    if (userInfo) {
+      setCurrentUser(userInfo);
+    }
+  }, []);
 
   // If editing, populate form with task data
   useEffect(() => {
-    if (taskToEdit) {
+    if (taskToEdit && currentUser) {
+      const assigneeType = taskToEdit.assignee === currentUser._id ? 'self' : 'partner';
+      
       setFormData({
         title: taskToEdit.title,
         description: taskToEdit.description || '',
         deadline: getEndOfDay(), // Always set to end of current day
         recurringType: taskToEdit.recurringType || 'none',
         priority: taskToEdit.priority || 'medium',
-        tags: taskToEdit.tags ? taskToEdit.tags.join(', ') : ''
+        tags: taskToEdit.tags ? taskToEdit.tags.join(', ') : '',
+        assigneeType: assigneeType
       });
     }
-  }, [taskToEdit]);
+  }, [taskToEdit, currentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,6 +81,15 @@ const TaskForm = ({ partnershipId, partner, onTaskCreated, taskToEdit }) => {
         ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
         : [];
 
+      // Determine assignee based on selection
+      const assigneeId = formData.assigneeType === 'self' ? userInfo._id : partner?._id;
+
+      if (!assigneeId) {
+        toast.error('Invalid assignee selection');
+        setLoading(false);
+        return;
+      }
+
       const taskData = {
         title: formData.title,
         description: formData.description,
@@ -75,7 +97,7 @@ const TaskForm = ({ partnershipId, partner, onTaskCreated, taskToEdit }) => {
         recurringType: formData.recurringType,
         priority: formData.priority,
         tags: tagsArray,
-        assignee: userInfo._id, // Self-assignment - assign to current user
+        assignee: assigneeId,
         partnership: partnershipId
       };
 
@@ -197,10 +219,18 @@ const TaskForm = ({ partnershipId, partner, onTaskCreated, taskToEdit }) => {
         </div>
 
         <div className="form-group">
-          <label>Assignment</label>
-          <div className="assignee-info">
-            Self Assigned (You will complete this task)
-          </div>
+          <label htmlFor="assigneeType">Assign To</label>
+          <select
+            id="assigneeType"
+            name="assigneeType"
+            value={formData.assigneeType}
+            onChange={handleChange}
+          >
+            <option value="self">Myself (I will complete this task)</option>
+            {partner && (
+              <option value="partner">{partner.name} (They will complete this task)</option>
+            )}
+          </select>
         </div>
 
         <button
