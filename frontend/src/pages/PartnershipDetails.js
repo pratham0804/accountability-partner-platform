@@ -252,6 +252,19 @@ const PartnershipDetails = () => {
                 </button>
               )}
             </div>
+
+            {partnership.status === 'accepted' && (
+              <div className="partnership-tasks-section">
+                <h3>Tasks</h3>
+                <p>Manage tasks and track progress with your accountability partner.</p>
+                <Link 
+                  to={`/partnerships/${id}/tasks`} 
+                  className="btn btn-primary"
+                >
+                  View Tasks
+                </Link>
+              </div>
+            )}
           </div>
         ) : (
           <div className="card agreement-card">
