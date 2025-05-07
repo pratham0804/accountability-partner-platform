@@ -3,92 +3,110 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const ProofSubmission = ({ taskId, onProofSubmitted }) => {
-  const [formData, setFormData] = useState({
-    proofType: 'text',
-    content: '',
-    additionalNotes: ''
-  });
+  const [proofType, setProofType] = useState('text');
+  const [content, setContent] = useState('');
+  const [additionalNotes, setAdditionalNotes] = useState('');
   const [loading, setLoading] = useState(false);
-  const [existingProof, setExistingProof] = useState(null);
+  const [integrations, setIntegrations] = useState([]);
+  const [githubRepo, setGithubRepo] = useState('');
+  const [githubCommitHash, setGithubCommitHash] = useState('');
+  const [githubPullRequest, setGithubPullRequest] = useState('');
 
   useEffect(() => {
-    // Check if there's already a proof for this task
-    const fetchExistingProof = async () => {
-      try {
-        const userInfo = JSON.parse(localStorage.getItem('user'));
-        if (!userInfo) return;
+    fetchIntegrations();
+  }, []);
 
-        const response = await axios.get(
-          `http://localhost:5000/api/proofs/task/${taskId}`,
-          { headers: { Authorization: `Bearer ${userInfo.token}` } }
-        );
-
-        if (response.data && response.data.length > 0) {
-          // Get the most recent proof
-          const latestProof = response.data[0];
-          setExistingProof(latestProof);
-          
-          // Pre-fill the form with existing proof data
-          setFormData({
-            proofType: latestProof.proofType,
-            content: latestProof.content,
-            additionalNotes: latestProof.additionalNotes || ''
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching existing proof:', error);
+  const fetchIntegrations = async () => {
+    try {
+      const userInfo = JSON.parse(localStorage.getItem('user'));
+      if (!userInfo || !userInfo.token) {
+        return;
       }
-    };
 
-    if (taskId) {
-      fetchExistingProof();
+      const response = await axios.get(
+        'http://localhost:5000/api/integrations',
+        { headers: { Authorization: `Bearer ${userInfo.token}` } }
+      );
+
+      setIntegrations(response.data);
+    } catch (error) {
+      console.error('Error fetching integrations:', error);
     }
-  }, [taskId]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.content.trim()) {
-      toast.error('Please provide the proof content');
-      return;
-    }
+    setLoading(true);
 
     try {
-      setLoading(true);
-      
       const userInfo = JSON.parse(localStorage.getItem('user'));
-      if (!userInfo) {
+      if (!userInfo || !userInfo.token) {
         toast.error('You need to be logged in');
         setLoading(false);
         return;
+      }
+
+      let proofContent = content;
+
+      // Handle GitHub verification
+      if (proofType === 'github') {
+        if (!githubRepo) {
+          toast.error('Please enter a repository name');
+          setLoading(false);
+          return;
+        }
+
+        if (!githubCommitHash && !githubPullRequest) {
+          toast.error('Please enter either a commit hash or pull request number');
+          setLoading(false);
+          return;
+        }
+
+        try {
+          const verificationResponse = await axios.post(
+            'http://localhost:5000/api/integrations/github/verify',
+            {
+              repository: githubRepo,
+              commitHash: githubCommitHash,
+              pullRequestNumber: githubPullRequest
+            },
+            { headers: { Authorization: `Bearer ${userInfo.token}` } }
+          );
+
+          proofContent = JSON.stringify(verificationResponse.data);
+        } catch (error) {
+          console.error('Error verifying GitHub activity:', error);
+          toast.error('Failed to verify GitHub activity');
+          setLoading(false);
+          return;
+        }
       }
 
       const response = await axios.post(
         'http://localhost:5000/api/proofs',
         {
           taskId,
-          ...formData
+          proofType,
+          content: proofContent,
+          additionalNotes
         },
         { headers: { Authorization: `Bearer ${userInfo.token}` } }
       );
-      
+
       setLoading(false);
-      toast.success(existingProof ? 'Proof updated successfully' : 'Proof submitted successfully');
+      toast.success('Proof submitted successfully');
       
       if (onProofSubmitted) {
         onProofSubmitted(response.data);
       }
-      
-      // Update the existing proof reference
-      setExistingProof(response.data);
+
+      // Reset form
+      setProofType('text');
+      setContent('');
+      setAdditionalNotes('');
+      setGithubRepo('');
+      setGithubCommitHash('');
+      setGithubPullRequest('');
     } catch (error) {
       console.error('Error submitting proof:', error);
       setLoading(false);
@@ -96,91 +114,119 @@ const ProofSubmission = ({ taskId, onProofSubmitted }) => {
     }
   };
 
+  const hasGithubIntegration = integrations.some(
+    i => i.platform === 'github' && i.isActive
+  );
+
   return (
-    <div className="proof-submission-form card">
-      <h2>{existingProof ? 'Update Proof of Completion' : 'Submit Proof of Completion'}</h2>
-      
-      {existingProof && existingProof.verificationStatus !== 'pending' && (
-        <div className={`proof-status ${existingProof.verificationStatus}`}>
-          <p>
-            <strong>Status: </strong> 
-            {existingProof.verificationStatus.charAt(0).toUpperCase() + existingProof.verificationStatus.slice(1)}
-          </p>
-          {existingProof.verificationComment && (
-            <p>
-              <strong>Comment: </strong> 
-              {existingProof.verificationComment}
-            </p>
-          )}
-          {existingProof.rejectionReason && (
-            <p>
-              <strong>Rejection Reason: </strong> 
-              {existingProof.rejectionReason}
-            </p>
-          )}
-        </div>
-      )}
+    <div className="proof-submission">
+      <h3>Submit Proof</h3>
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="proofType">Proof Type*</label>
+          <label htmlFor="proofType">Proof Type</label>
           <select
             id="proofType"
-            name="proofType"
-            value={formData.proofType}
-            onChange={handleChange}
+            value={proofType}
+            onChange={(e) => setProofType(e.target.value)}
             required
           >
             <option value="text">Text Description</option>
-            <option value="link">Link/URL</option>
-            <option value="image">Image URL</option>
-            <option value="file">File Reference</option>
+            <option value="image">Image</option>
+            <option value="link">Link</option>
+            <option value="file">File</option>
+            {hasGithubIntegration && (
+              <option value="github">GitHub Activity</option>
+            )}
           </select>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="content">
-            {formData.proofType === 'text' && 'Description'}
-            {formData.proofType === 'link' && 'URL'}
-            {formData.proofType === 'image' && 'Image URL'}
-            {formData.proofType === 'file' && 'File Reference'}
-            *
-          </label>
-          {formData.proofType === 'text' ? (
-            <textarea
-              id="content"
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="Describe how you completed the task..."
-              rows={4}
-              required
-            />
-          ) : (
-            <input
-              type="text"
-              id="content"
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder={
-                formData.proofType === 'link' ? 'Enter URL (e.g. https://example.com)' :
-                formData.proofType === 'image' ? 'Enter image URL' :
-                'Enter file reference'
-              }
-              required
-            />
-          )}
-        </div>
+        {proofType === 'github' ? (
+          <div className="github-verification">
+            <div className="form-group">
+              <label htmlFor="githubRepo">Repository (owner/repo)</label>
+              <input
+                type="text"
+                id="githubRepo"
+                value={githubRepo}
+                onChange={(e) => setGithubRepo(e.target.value)}
+                placeholder="e.g., username/repository"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="githubCommitHash">Commit Hash (optional)</label>
+              <input
+                type="text"
+                id="githubCommitHash"
+                value={githubCommitHash}
+                onChange={(e) => setGithubCommitHash(e.target.value)}
+                placeholder="e.g., a1b2c3d4"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="githubPullRequest">Pull Request Number (optional)</label>
+              <input
+                type="number"
+                id="githubPullRequest"
+                value={githubPullRequest}
+                onChange={(e) => setGithubPullRequest(e.target.value)}
+                placeholder="e.g., 123"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="form-group">
+            <label htmlFor="content">Proof Content</label>
+            {proofType === 'text' && (
+              <textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Describe your proof..."
+                required
+                rows={4}
+              />
+            )}
+            {proofType === 'image' && (
+              <input
+                type="file"
+                id="content"
+                accept="image/*"
+                onChange={(e) => setContent(e.target.files[0])}
+                required
+              />
+            )}
+            {proofType === 'link' && (
+              <input
+                type="url"
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Enter URL..."
+                required
+              />
+            )}
+            {proofType === 'file' && (
+              <input
+                type="file"
+                id="content"
+                onChange={(e) => setContent(e.target.files[0])}
+                required
+              />
+            )}
+          </div>
+        )}
 
         <div className="form-group">
-          <label htmlFor="additionalNotes">Additional Notes</label>
+          <label htmlFor="additionalNotes">Additional Notes (Optional)</label>
           <textarea
             id="additionalNotes"
-            name="additionalNotes"
-            value={formData.additionalNotes}
-            onChange={handleChange}
-            placeholder="Any additional information about your proof..."
+            value={additionalNotes}
+            onChange={(e) => setAdditionalNotes(e.target.value)}
+            placeholder="Add any additional context..."
             rows={2}
           />
         </div>
@@ -190,15 +236,9 @@ const ProofSubmission = ({ taskId, onProofSubmitted }) => {
           className="btn btn-primary"
           disabled={loading}
         >
-          {loading ? 'Submitting...' : existingProof ? 'Update Proof' : 'Submit Proof'}
+          {loading ? 'Submitting...' : 'Submit Proof'}
         </button>
       </form>
-      
-      {existingProof && existingProof.verificationStatus === 'rejected' && (
-        <div className="resubmission-note">
-          <p>Your previous submission was rejected. Please update your proof based on the feedback provided.</p>
-        </div>
-      )}
     </div>
   );
 };
