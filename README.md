@@ -1,40 +1,17 @@
 # Accountability Partner Platform
 
-A web application that connects users with accountability partners to help achieve their goals through financial stakes and mutual support.
+A web application that helps users find accountability partners, set goals, and track progress together.
 
 ## Features
 
-### User Authentication
-- Registration and login with JWT authentication
-- Secure password hashing
-- User profile management
-
-### Partner Matching
-- Interest-based matching algorithm
-- Partner request system
-- Partnership management
-
-### Agreement System
-- Create detailed agreements with goals and timeframes
-- Set financial stakes for goal achievement
-- Track agreement progress
-
-### Wallet & Escrow System
-- Virtual wallet for managing funds
-- Deposit and withdraw functionality
-- Escrow system for holding stakes during agreements
-- Automatic fund release based on agreement outcomes
-
-### Task Management
-- Create and assign tasks
-- Track task completion
-- Proof submission and verification
-
-### Proof Submission & Verification
-- Submit proofs for completed tasks
-- Multiple proof formats (text, image, link, file)
-- Verification by accountability partners
-- Approval/rejection workflow with comments
+- User Authentication & Profile Management
+- Partner Matching System
+- Partnership Formation & Agreements
+- Task Management
+- Proof Submission & Verification
+- Secure Chat System
+- Wallet & Escrow System
+- Content Moderation
 
 ## Technical Stack
 
