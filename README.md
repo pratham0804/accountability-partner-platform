@@ -257,3 +257,41 @@ Create a new task
   "deadline": "date"
 }
 ```
+
+## Contributing
+
+We welcome contributions to the Accountability Partner Platform! Here's how you can help:
+
+### Development Process
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### Commit Message Guidelines
+
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation changes
+- `style:` Code style changes (formatting, etc)
+- `refactor:` Code refactoring
+- `test:` Adding or updating tests
+- `chore:` Maintenance tasks
+
+### Code Style
+
+- Use ESLint for code linting
+- Follow the existing code style
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+
+### Pull Request Process
+
+1. Update the README.md with details of changes if needed
+2. Update the package.json version if needed
+3. The PR will be merged once you have the sign-off of two other developers
