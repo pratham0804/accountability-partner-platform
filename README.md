@@ -33,39 +33,65 @@ A web application that helps users find accountability partners, set goals, and 
 
 ## Setup Instructions
 
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB
+- Git
+
 ### Backend Setup
-1. Navigate to the backend directory:
-   ```
-   cd backend
-   ```
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Create a `.env` file with the following variables:
-   ```
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   PORT=5000
-   ```
-4. Start the server:
-   ```
-   npm start
-   ```
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/accountability-partner-platform.git
+cd accountability-partner-platform/backend
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Create .env file
+```bash
+cp .env.example .env
+```
+
+4. Update environment variables in .env
+```
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+PORT=5000
+```
+
+5. Start the server
+```bash
+npm run dev
+```
 
 ### Frontend Setup
-1. Navigate to the frontend directory:
-   ```
-   cd frontend
-   ```
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Start the development server:
-   ```
-   npm start
-   ```
+1. Navigate to frontend directory
+```bash
+cd ../frontend
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Create .env file
+```bash
+cp .env.example .env
+```
+
+4. Update environment variables in .env
+```
+REACT_APP_API_URL=http://localhost:5000
+```
+
+5. Start the development server
+```bash
+npm start
+```
 4. Access the application at `http://localhost:3000`
 
 ## Recent Updates
