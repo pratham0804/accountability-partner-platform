@@ -15,17 +15,21 @@ A web application that helps users find accountability partners, set goals, and 
 
 ## Technical Stack
 
-### Backend
-- Node.js + Express
-- MongoDB for data storage
-- JWT for authentication
-- RESTful API design
-
 ### Frontend
-- React for UI components
+- React.js
+- Redux for state management
 - React Router for navigation
-- Axios for API communication
-- React-Toastify for notifications
+- Axios for API calls
+- Material-UI for components
+- Socket.io-client for real-time chat
+
+### Backend
+- Node.js with Express
+- MongoDB with Mongoose
+- JWT for authentication
+- Socket.io for real-time features
+- Nodemailer for email notifications
+- Joi for request validation
 
 ## Setup Instructions
 
