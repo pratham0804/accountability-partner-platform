@@ -185,3 +185,75 @@ npm start
 - [ ] Admin Panel
 - [ ] UI Enhancement & Responsiveness
 - [ ] Final Testing & Deployment Preparation
+
+## API Documentation
+
+### Authentication Endpoints
+
+#### POST /api/users/register
+Register a new user
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "interests": ["string"]
+}
+```
+
+#### POST /api/users/login
+Login user
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+### Partnership Endpoints
+
+#### GET /api/partnerships
+Get user's partnerships
+
+#### POST /api/partnerships
+Create partnership request
+```json
+{
+  "partnerId": "string",
+  "agreement": {
+    "goals": ["string"],
+    "duration": "number",
+    "stake": "number"
+  }
+}
+```
+
+### Message Endpoints
+
+#### GET /api/messages/partnership/:partnershipId
+Get messages for a partnership
+
+#### POST /api/messages
+Send a message
+```json
+{
+  "partnershipId": "string",
+  "content": "string"
+}
+```
+
+### Task Endpoints
+
+#### GET /api/tasks/partnership/:partnershipId
+Get tasks for a partnership
+
+#### POST /api/tasks
+Create a new task
+```json
+{
+  "partnershipId": "string",
+  "title": "string",
+  "description": "string",
+  "deadline": "date"
+}
+```
