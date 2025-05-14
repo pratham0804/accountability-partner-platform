@@ -11,7 +11,7 @@ A web application that helps users find accountability partners, set goals, and 
 - Proof Submission & Verification
 - Secure Chat System
 - Wallet & Escrow System
-- Content Moderation
+- Content Moderation.
 
 ## Technical Stack
 
