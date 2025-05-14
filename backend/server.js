@@ -30,6 +30,7 @@ const walletRoutes = require('./routes/walletRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const proofRoutes = require('./routes/proofRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const moderationRoutes = require('./routes/moderationRoutes');
 
 // Initialize express app
 const app = express();
@@ -55,7 +56,8 @@ app.get('/api/test', (req, res) => {
       partnership: true,
       wallet: true,
       task: true,
-      message: true
+      message: true,
+      moderation: true
     }
   });
 });
@@ -76,6 +78,7 @@ app.use('/api/wallet', walletRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/proofs', proofRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/moderation', moderationRoutes);
 
 // Error handling middleware
 app.use(notFound);
