@@ -7,10 +7,12 @@ const EscrowReleaseForm = ({ partnershipId, onFundsReleased }) => {
   const [description, setDescription] = useState('');
   const [isSuccess, setIsSuccess] = useState(true);
   const [partnershipVerified, setPartnershipVerified] = useState(false);
+  const [partnershipData, setPartnershipData] = useState(null);
+  const [walletData, setWalletData] = useState(null);
 
-  // Verify partnership exists
+  // Verify partnership exists and fetch wallet data
   useEffect(() => {
-    const verifyPartnership = async () => {
+    const fetchData = async () => {
       try {
         const userInfo = JSON.parse(localStorage.getItem('user'));
         if (!userInfo || !userInfo.token) {
@@ -18,24 +20,50 @@ const EscrowReleaseForm = ({ partnershipId, onFundsReleased }) => {
           return;
         }
 
-        // Directly verify the partnership exists
-        const response = await axios.get(
+        const config = {
+          headers: { Authorization: `Bearer ${userInfo.token}` }
+        };
+
+        // Fetch partnership data
+        const partnershipResponse = await axios.get(
           `http://localhost:5000/api/partnerships/${partnershipId}`,
-          { headers: { Authorization: `Bearer ${userInfo.token}` } }
+          config
         );
         
-        if (response.data) {
-          console.log('Partnership verified:', response.data);
+        if (partnershipResponse.data) {
+          console.log('Partnership verified:', partnershipResponse.data);
+          setPartnershipData(partnershipResponse.data);
           setPartnershipVerified(true);
+
+          // Check if partnership is already completed
+          if (partnershipResponse.data.status === 'completed') {
+            toast.warning('This agreement has already been completed.');
+          }
+
+          // Check if partnership has financial stake
+          if (!partnershipResponse.data.agreement?.financialStake?.amount) {
+            toast.warning('This partnership has no financial stake.');
+          }
+        }
+
+        // Fetch wallet data
+        const walletResponse = await axios.get(
+          'http://localhost:5000/api/wallet',
+          config
+        );
+        
+        if (walletResponse.data) {
+          console.log('Wallet data:', walletResponse.data);
+          setWalletData(walletResponse.data);
         }
       } catch (err) {
-        console.error('Error verifying partnership:', err);
-        toast.error('Cannot verify partnership existence');
+        console.error('Error fetching data:', err);
+        toast.error(err.response?.data?.message || 'Failed to verify partnership');
       }
     };
 
     if (partnershipId) {
-      verifyPartnership();
+      fetchData();
     }
   }, [partnershipId]);
 
@@ -60,6 +88,10 @@ const EscrowReleaseForm = ({ partnershipId, onFundsReleased }) => {
 
       console.log('Making request to:', `/api/wallet/escrow/release/${partnershipId}`);
       console.log('Token:', userInfo.token);
+      console.log('Request payload:', { 
+        isSuccess, 
+        description: description || `Funds ${isSuccess ? 'returned' : 'forfeited'} for completed agreement` 
+      });
       
       // Use the full URL instead of relying on proxy
       const response = await axios.post(
@@ -71,6 +103,7 @@ const EscrowReleaseForm = ({ partnershipId, onFundsReleased }) => {
         { headers: { Authorization: `Bearer ${userInfo.token}` } }
       );
 
+      console.log('Response from escrow release:', response.data);
       toast.success(
         isSuccess 
           ? 'Congratulations! Funds have been successfully returned to your wallet.' 
@@ -87,11 +120,25 @@ const EscrowReleaseForm = ({ partnershipId, onFundsReleased }) => {
       console.error('Error releasing escrow:', err);
       setLoading(false);
       
-      // Check if the error is about insufficient funds
-      if (err.response?.data?.message && err.response.data.message.includes('Insufficient funds in escrow')) {
-        toast.error('These funds have already been released. The agreement is completed.');
+      // Check for common error conditions
+      if (err.response?.data?.message) {
+        const errorMsg = err.response.data.message;
+        
+        if (errorMsg.includes('Insufficient funds in escrow')) {
+          toast.error('Unable to release funds. The escrow account has insufficient balance.');
+        } else if (errorMsg.includes('No funds were ever locked in escrow')) {
+          toast.error('No funds were ever locked in escrow for this partnership.');
+        } else if (errorMsg.includes('Funds have already been released')) {
+          toast.error('These funds have already been released. The agreement is completed.');
+        } else if (errorMsg.includes('No funds in escrow')) {
+          toast.error('No funds found in escrow for this partnership.');
+        } else if (errorMsg.includes('already been completed')) {
+          toast.error('This agreement has already been completed and funds released.');
+        } else {
+          toast.error(errorMsg);
+        }
       } else {
-        toast.error(err.response?.data?.message || 'Failed to process escrow release');
+        toast.error('Failed to process escrow release. Please try again later.');
       }
     }
   };
@@ -100,6 +147,24 @@ const EscrowReleaseForm = ({ partnershipId, onFundsReleased }) => {
     <div className="escrow-release-form card">
       <h3>Complete Agreement</h3>
       <p>Release funds from escrow based on agreement outcome</p>
+      
+      {partnershipData && partnershipData.status === 'completed' && (
+        <div className="alert alert-warning">
+          This agreement has already been marked as completed.
+        </div>
+      )}
+      
+      {partnershipData && !partnershipData.agreement?.financialStake?.amount && (
+        <div className="alert alert-warning">
+          This partnership has no financial stake in escrow.
+        </div>
+      )}
+      
+      {walletData && walletData.escrowBalance <= 0 && (
+        <div className="alert alert-warning">
+          Your wallet has no funds in escrow (Balance: ${walletData.escrowBalance.toFixed(2)}).
+        </div>
+      )}
       
       <form onSubmit={handleReleaseFromEscrow}>
         <div className="form-group">
@@ -147,9 +212,21 @@ const EscrowReleaseForm = ({ partnershipId, onFundsReleased }) => {
         <button 
           type="submit" 
           className="btn btn-primary" 
-          disabled={loading || !partnershipVerified}
+          disabled={
+            loading || 
+            !partnershipVerified || 
+            (partnershipData && partnershipData.status === 'completed') ||
+            (partnershipData && !partnershipData.agreement?.financialStake?.amount)
+          }
         >
-          {loading ? 'Processing...' : partnershipVerified ? 'Complete Agreement' : 'Verifying Partnership...'}
+          {loading 
+            ? 'Processing...' 
+            : !partnershipVerified 
+              ? 'Verifying Partnership...'
+              : (partnershipData && partnershipData.status === 'completed')
+                ? 'Agreement Already Completed'
+                : 'Complete Agreement'
+          }
         </button>
         
         <div className="info-text">
