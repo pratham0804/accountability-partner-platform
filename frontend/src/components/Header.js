@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import NotificationBell from './NotificationBell';
 
 const Header = () => {
   const [user, setUser] = useState(null);
@@ -48,6 +49,9 @@ const Header = () => {
             </li>
             <li>
               <Link to="/wallet">Wallet</Link>
+            </li>
+            <li className="notification-bell-wrapper">
+              <NotificationBell />
             </li>
             {user.isAdmin && (
               <li>
