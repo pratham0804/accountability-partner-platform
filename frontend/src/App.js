@@ -19,6 +19,7 @@ import MyTasks from './pages/MyTasks';
 import ProofVerificationQueue from './pages/ProofVerificationQueue';
 import ChatPage from './pages/ChatPage';
 import ChatsList from './pages/ChatsList';
+import ModerationDashboard from './pages/ModerationDashboard';
 import './App.css';
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
             <Route path="/tasks/:taskId" element={<TaskDetail />} />
             <Route path="/my-tasks" element={<MyTasks />} />
             <Route path="/proof-verification" element={<ProofVerificationQueue />} />
+            <Route path="/moderation-dashboard" element={<ModerationDashboard />} />
           </Routes>
         </main>
         <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
