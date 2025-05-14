@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const AgreementForm = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const AgreementForm = () => {
   const [partnership, setPartnership] = useState(null);
   const [partner, setPartner] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   
@@ -123,48 +125,59 @@ const AgreementForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccessMessage('');
-    
-    // Filter out empty goals
-    const filteredGoals = formData.goals.filter(goal => goal.trim() !== '');
-    
-    if (filteredGoals.length === 0) {
-      setError('Please add at least one goal');
-      return;
-    }
-    
+    setIsSubmitting(true);
+
     try {
-      setIsLoading(true);
       const userInfo = JSON.parse(localStorage.getItem('user'));
-      
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userInfo.token}`,
         },
       };
-      
-      const dataToSubmit = {
-        ...formData,
-        goals: filteredGoals
-      };
 
-      await axios.put(`/api/partnerships/${id}/agreement`, dataToSubmit, config);
+      // Create the agreement
+      const agreementResponse = await axios.put(
+        `/api/partnerships/${id}/agreement`,
+        formData,
+        config
+      );
+
+      console.log('Agreement created:', agreementResponse.data);
       
-      setSuccessMessage('Agreement created successfully');
-      
-      // Redirect to partnerships page after a short delay
-      setTimeout(() => {
-        navigate('/partnerships');
-      }, 2000);
+      // If financial stake is added, automatically transfer to escrow
+      if (formData.financialStake && formData.financialStake.amount > 0) {
+        try {
+          console.log('Transferring funds to escrow:', formData.financialStake.amount);
+          
+          const escrowResponse = await axios.post(
+            `http://localhost:5000/api/wallet/escrow/${id}`,
+            { amount: formData.financialStake.amount },
+            { headers: { Authorization: `Bearer ${userInfo.token}` } }
+          );
+          
+          console.log('Escrow transfer successful:', escrowResponse.data);
+          toast.success(`Successfully staked $${formData.financialStake.amount} in escrow`);
+        } catch (escrowError) {
+          console.error('Error transferring to escrow:', escrowError);
+          
+          if (escrowError.response?.data?.message === 'Insufficient funds') {
+            toast.error('Could not stake funds. Insufficient balance in your wallet.');
+          } else {
+            toast.error('Agreement created but could not transfer funds to escrow. Please use the dashboard to complete this step.');
+          }
+        }
+      }
+
+      toast.success('Partnership agreement created successfully');
+      navigate(`/partnerships/${id}`);
     } catch (error) {
-      setError(
+      setIsSubmitting(false);
+      toast.error(
         error.response && error.response.data.message
           ? error.response.data.message
           : 'Failed to create agreement'
       );
-      setIsLoading(false);
     }
   };
 
@@ -307,8 +320,8 @@ const AgreementForm = () => {
         </div>
 
         <div className="form-group submit-section">
-          <button type="submit" className="btn btn-block" disabled={isLoading}>
-            {isLoading ? 'Creating...' : 'Create Agreement'}
+          <button type="submit" className="btn btn-block" disabled={isSubmitting}>
+            {isSubmitting ? 'Creating...' : 'Create Agreement'}
           </button>
         </div>
       </form>
