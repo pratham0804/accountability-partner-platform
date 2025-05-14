@@ -6,6 +6,7 @@ const {
   getUserProfile,
   updateUserProfile,
   getInterestCategories,
+  checkAdminStatus,
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -19,5 +20,8 @@ router.put('/profile', protect, updateUserProfile);
 
 // Interest categories route
 router.get('/interests', getInterestCategories);
+
+// Admin check route
+router.get('/check-admin', protect, checkAdminStatus);
 
 module.exports = router; 
