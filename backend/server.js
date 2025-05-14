@@ -31,6 +31,8 @@ const taskRoutes = require('./routes/taskRoutes');
 const proofRoutes = require('./routes/proofRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const moderationRoutes = require('./routes/moderationRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const statisticsRoutes = require('./routes/statisticsRoutes');
 
 // Initialize express app
 const app = express();
@@ -57,7 +59,9 @@ app.get('/api/test', (req, res) => {
       wallet: true,
       task: true,
       message: true,
-      moderation: true
+      moderation: true,
+      notification: true,
+      statistics: true
     }
   });
 });
@@ -79,6 +83,8 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/proofs', proofRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/moderation', moderationRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/statistics', statisticsRoutes);
 
 // Error handling middleware
 app.use(notFound);
