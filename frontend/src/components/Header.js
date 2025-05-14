@@ -49,6 +49,11 @@ const Header = () => {
             <li>
               <Link to="/wallet">Wallet</Link>
             </li>
+            {user.isAdmin && (
+              <li>
+                <Link to="/moderation-dashboard">Moderation</Link>
+              </li>
+            )}
             <li>
               <Link to="/profile">Profile</Link>
             </li>
