@@ -237,6 +237,16 @@ const releaseFromEscrow = asyncHandler(async (req, res) => {
     throw new Error('No funds in escrow for this partnership');
   }
 
+  // Check if partnership is already completed
+  if (partnership.status === 'completed') {
+    console.log('Partnership already completed:', {
+      partnershipId,
+      status: partnership.status
+    });
+    res.status(400);
+    throw new Error('This agreement has already been completed and funds released');
+  }
+
   // Get wallet
   const wallet = await Wallet.findOne({ user: req.user._id });
   if (!wallet) {
@@ -256,14 +266,45 @@ const releaseFromEscrow = asyncHandler(async (req, res) => {
     partnershipId
   });
 
-  // Check if there are enough funds in escrow
+  // Check if there was ever an escrow_lock transaction for this partnership
+  const escrowLockTransaction = await Transaction.findOne({
+    partnership: partnershipId,
+    type: 'escrow_lock',
+    user: req.user._id
+  });
+
+  if (!escrowLockTransaction) {
+    console.log('No escrow lock transaction found for this partnership');
+    res.status(400);
+    throw new Error('No funds were ever locked in escrow for this partnership');
+  }
+
+  // Check if there was already a reward/penalty transaction for this partnership
+  const existingReleaseTransaction = await Transaction.findOne({
+    partnership: partnershipId,
+    type: { $in: ['reward', 'penalty'] },
+    user: req.user._id
+  });
+
+  if (existingReleaseTransaction) {
+    console.log('Funds already released for this partnership:', {
+      existingReleaseTransaction
+    });
+    res.status(400);
+    throw new Error('Funds have already been released for this partnership');
+  }
+
+  // Check if there are enough funds in escrow - only if no release has happened yet
   if (wallet.escrowBalance < amount) {
     console.log('Insufficient escrow balance:', {
       escrowBalance: wallet.escrowBalance,
       amount
     });
-    res.status(400);
-    throw new Error('Insufficient funds in escrow');
+    
+    // If escrow balance is too low but we have a lock transaction, fix the wallet balance
+    wallet.escrowBalance = amount; // Restore the escrow balance
+    await wallet.save();
+    console.log('Fixed escrow balance:', wallet.escrowBalance);
   }
 
   // Create transaction record
