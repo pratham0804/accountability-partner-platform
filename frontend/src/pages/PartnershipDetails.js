@@ -3,6 +3,8 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import EscrowFundForm from '../components/EscrowFundForm';
 import EscrowReleaseForm from '../components/EscrowReleaseForm';
+import EscrowGuide from '../components/EscrowGuide';
+import { toast } from 'react-toastify';
 
 const PartnershipDetails = () => {
   const [partnership, setPartnership] = useState(null);
@@ -13,6 +15,9 @@ const PartnershipDetails = () => {
   const [showReleaseForm, setShowReleaseForm] = useState(false);
   const [transactionsChecked, setTransactionsChecked] = useState(false);
   const [fundsAlreadyReleased, setFundsAlreadyReleased] = useState(false);
+  const [showAddFundsForm, setShowAddFundsForm] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [showEscrowGuide, setShowEscrowGuide] = useState(false);
   
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,52 +30,57 @@ const PartnershipDetails = () => {
       return;
     }
 
-    const fetchPartnership = async () => {
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`,
-          },
-        };
-
-        console.log('Fetching partnership with ID:', id);
-        const { data } = await axios.get(`http://localhost:5000/api/partnerships/${id}`, config);
-        console.log('Partnership data:', data);
-        setPartnership(data);
-        
-        // Determine who is the partner
-        const userId = userInfo._id;
-        if (data.requester._id === userId) {
-          setPartner(data.recipient);
-        } else {
-          setPartner(data.requester);
-        }
-        
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching partnership:', error);
-        setError(
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : 'Failed to load partnership details'
-        );
-        setIsLoading(false);
-      }
-    };
-
     fetchPartnership();
   }, [id, navigate]);
 
+  // Function to fetch partnership details
+  const fetchPartnership = async () => {
+    try {
+      setIsLoading(true);
+      const userInfo = JSON.parse(localStorage.getItem('user'));
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      console.log('Fetching partnership with ID:', id);
+      const { data } = await axios.get(`http://localhost:5000/api/partnerships/${id}`, config);
+      console.log('Partnership data:', data);
+      setPartnership(data);
+      
+      // Determine who is the partner
+      const userId = userInfo._id;
+      if (data.requester._id === userId) {
+        setPartner(data.recipient);
+      } else {
+        setPartner(data.requester);
+      }
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching partnership:', error);
+      setError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : 'Failed to load partnership details'
+      );
+      setIsLoading(false);
+    }
+  };
+
   // Check if funds have already been released for this partnership
   useEffect(() => {
-    if (!partnership || transactionsChecked) {
+    if (!partnership) {
       return;
     }
 
     const checkTransactions = async () => {
       try {
+        setTransactionsChecked(false); // Reset the check flag
         const userInfo = JSON.parse(localStorage.getItem('user'));
         if (!userInfo || !userInfo.token) {
+          setTransactionsChecked(true);
           return;
         }
 
@@ -89,25 +99,91 @@ const PartnershipDetails = () => {
         if (releaseTransactions.length > 0) {
           console.log('Found previous release transactions:', releaseTransactions);
           setFundsAlreadyReleased(true);
+        } else {
+          setFundsAlreadyReleased(false);
         }
         
         setTransactionsChecked(true);
       } catch (err) {
         console.error('Error checking transactions:', err);
+        // Even if there's an error, mark as checked so we don't keep trying
+        setTransactionsChecked(true);
       }
     };
 
     checkTransactions();
-  }, [partnership, id, transactionsChecked]);
+  }, [partnership, id]);
+
+  // Add a function to fetch wallet balance
+  useEffect(() => {
+    const fetchWalletBalance = async () => {
+      try {
+        const userInfo = JSON.parse(localStorage.getItem('user'));
+        if (!userInfo || !userInfo.token) {
+          return;
+        }
+        
+        const response = await axios.get(
+          'http://localhost:5000/api/wallet',
+          { headers: { Authorization: `Bearer ${userInfo.token}` } }
+        );
+        
+        if (response.data) {
+          setWalletBalance(response.data.balance);
+        }
+      } catch (err) {
+        console.error('Error fetching wallet balance:', err);
+      }
+    };
+    
+    fetchWalletBalance();
+  }, []);
+
+  // Add a quick deposit function
+  const handleQuickDeposit = async () => {
+    try {
+      const userInfo = JSON.parse(localStorage.getItem('user'));
+      if (!userInfo || !userInfo.token) {
+        toast.error('You need to be logged in');
+        return;
+      }
+      
+      const amount = 50; // Quick deposit of $50
+      
+      const response = await axios.post(
+        'http://localhost:5000/api/wallet/deposit',
+        { amount },
+        { headers: { Authorization: `Bearer ${userInfo.token}` } }
+      );
+      
+      if (response.data) {
+        setWalletBalance(response.data.wallet.balance);
+        toast.success(`Added $${amount} to your wallet!`);
+      }
+    } catch (err) {
+      console.error('Error adding funds:', err);
+      toast.error('Failed to add funds to wallet');
+    }
+  };
 
   const handleFundsTransferred = (data) => {
+    // Update the partnership data
     setPartnership(data.partnership);
+    // Hide the form
     setShowEscrowForm(false);
+    // Refresh the partnership data from server to ensure everything is up-to-date
+    fetchPartnership();
   };
 
   const handleFundsReleased = (data) => {
+    // Update the partnership data with the completed status
     setPartnership(data.partnership);
+    // Set funds already released to true to immediately update UI
+    setFundsAlreadyReleased(true);
+    // Hide the form
     setShowReleaseForm(false);
+    // Refresh the partnership data from server
+    fetchPartnership();
   };
 
   if (isLoading) {
@@ -226,12 +302,23 @@ const PartnershipDetails = () => {
               </Link>
               
               {canAddToEscrow && (
-                <button 
-                  className="btn btn-primary" 
-                  onClick={() => setShowEscrowForm(true)}
-                >
-                  Add Financial Stake
-                </button>
+                <div className="escrow-buttons">
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => setShowEscrowForm(true)}
+                  >
+                    Add Financial Stake
+                  </button>
+                  <div className="wallet-info">
+                    <small>Wallet Balance: ${walletBalance.toFixed(2)}</small>
+                    <button 
+                      className="btn btn-small" 
+                      onClick={handleQuickDeposit}
+                    >
+                      Quick Add $50
+                    </button>
+                  </div>
+                </div>
               )}
               
               {canReleaseFromEscrow && !hasEscrowCompleted && (
@@ -304,6 +391,22 @@ const PartnershipDetails = () => {
             onFundsReleased={handleFundsReleased}
           />
         )}
+        
+        {/* Escrow Guide */}
+        {showEscrowGuide && (
+          <EscrowGuide onClose={() => setShowEscrowGuide(false)} />
+        )}
+        
+        {/* Help Button */}
+        <div className="help-button-container">
+          <button 
+            className="help-button"
+            onClick={() => setShowEscrowGuide(true)}
+          >
+            <span className="help-icon">?</span>
+            <span className="help-text">Escrow Help</span>
+          </button>
+        </div>
       </div>
     </div>
   );
