@@ -20,37 +20,42 @@ import ProofVerificationQueue from './pages/ProofVerificationQueue';
 import ChatPage from './pages/ChatPage';
 import ChatsList from './pages/ChatsList';
 import ModerationDashboard from './pages/ModerationDashboard';
+import NotificationsPage from './pages/NotificationsPage';
+import { NotificationProvider } from './contexts/NotificationContext';
 import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Header />
-        <main className="container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/matches" element={<Matches />} />
-            <Route path="/partnerships" element={<Partnerships />} />
-            <Route path="/partnerships/:id" element={<PartnershipDetails />} />
-            <Route path="/partnerships/:id/agreement" element={<AgreementForm />} />
-            <Route path="/partnerships/:partnershipId/chat" element={<ChatPage />} />
-            <Route path="/chats" element={<ChatsList />} />
-            <Route path="/wallet" element={<Wallet />} />
-            <Route path="/partnerships/:partnershipId/tasks" element={<Tasks />} />
-            <Route path="/tasks/:taskId" element={<TaskDetail />} />
-            <Route path="/my-tasks" element={<MyTasks />} />
-            <Route path="/proof-verification" element={<ProofVerificationQueue />} />
-            <Route path="/moderation-dashboard" element={<ModerationDashboard />} />
-          </Routes>
-        </main>
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
-      </div>
-    </Router>
+    <NotificationProvider>
+      <Router>
+        <div className="App">
+          <Header />
+          <main className="container">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/matches" element={<Matches />} />
+              <Route path="/partnerships" element={<Partnerships />} />
+              <Route path="/partnerships/:id" element={<PartnershipDetails />} />
+              <Route path="/partnerships/:id/agreement" element={<AgreementForm />} />
+              <Route path="/partnerships/:partnershipId/chat" element={<ChatPage />} />
+              <Route path="/chats" element={<ChatsList />} />
+              <Route path="/wallet" element={<Wallet />} />
+              <Route path="/partnerships/:partnershipId/tasks" element={<Tasks />} />
+              <Route path="/tasks/:taskId" element={<TaskDetail />} />
+              <Route path="/my-tasks" element={<MyTasks />} />
+              <Route path="/proof-verification" element={<ProofVerificationQueue />} />
+              <Route path="/moderation-dashboard" element={<ModerationDashboard />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+            </Routes>
+          </main>
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+        </div>
+      </Router>
+    </NotificationProvider>
   );
 }
 
