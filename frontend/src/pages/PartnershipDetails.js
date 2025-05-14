@@ -265,6 +265,19 @@ const PartnershipDetails = () => {
                 </Link>
               </div>
             )}
+
+            {partnership.status === 'accepted' && (
+              <div className="partnership-chat-section">
+                <h3>Communication</h3>
+                <p>Chat with your accountability partner in real-time.</p>
+                <Link 
+                  to={`/partnerships/${id}/chat`} 
+                  className="btn btn-secondary"
+                >
+                  Open Chat
+                </Link>
+              </div>
+            )}
           </div>
         ) : (
           <div className="card agreement-card">
