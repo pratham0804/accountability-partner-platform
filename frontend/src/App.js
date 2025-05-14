@@ -17,6 +17,8 @@ import Tasks from './pages/Tasks';
 import TaskDetail from './pages/TaskDetail';
 import MyTasks from './pages/MyTasks';
 import ProofVerificationQueue from './pages/ProofVerificationQueue';
+import ChatPage from './pages/ChatPage';
+import ChatsList from './pages/ChatsList';
 import './App.css';
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
             <Route path="/partnerships" element={<Partnerships />} />
             <Route path="/partnerships/:id" element={<PartnershipDetails />} />
             <Route path="/partnerships/:id/agreement" element={<AgreementForm />} />
+            <Route path="/partnerships/:partnershipId/chat" element={<ChatPage />} />
+            <Route path="/chats" element={<ChatsList />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/partnerships/:partnershipId/tasks" element={<Tasks />} />
             <Route path="/tasks/:taskId" element={<TaskDetail />} />
