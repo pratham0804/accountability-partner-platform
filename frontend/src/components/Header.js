@@ -41,6 +41,9 @@ const Header = () => {
               <Link to="/my-tasks">My Tasks</Link>
             </li>
             <li>
+              <Link to="/chats">Chats</Link>
+            </li>
+            <li>
               <Link to="/proof-verification">Verify Proofs</Link>
             </li>
             <li>
