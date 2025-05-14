@@ -14,4 +14,180 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Escrow Guide Styles */
+.escrow-guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.escrow-guide-modal {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #777;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #777;
+}
+
+.step.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.line {
+  flex: 1;
+  height: 2px;
+  background: #eee;
+  margin: 0 10px;
+}
+
+.guide-content {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.guide-content h2 {
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+
+.guide-image {
+  margin: 20px 0;
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.guide-image img {
+  max-width: 100%;
+  max-height: 200px;
+}
+
+.guide-nav {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Make previous button push to the left */
+.guide-nav .btn-secondary {
+  margin-right: auto;
+}
+
+/* When there's only one button (next), center it */
+.guide-nav:has(.btn-primary:only-child) {
+  justify-content: center;
+}
+
+/* Escrow buttons container */
+.escrow-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wallet-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f5f5f5;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.btn-small {
+  font-size: 0.8em;
+  padding: 5px 10px;
+  background: #ddd;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-small:hover {
+  background: #ccc;
+}
+
+/* Help Button Styles */
+.help-button-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 900;
+}
+
+.help-button {
+  display: flex;
+  align-items: center;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.help-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.help-icon {
+  font-size: 20px;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.help-text {
+  font-size: 14px;
 } 

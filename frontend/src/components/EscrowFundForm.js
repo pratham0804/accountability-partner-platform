@@ -11,6 +11,7 @@ const EscrowFundForm = ({ partnershipId, onFundsTransferred }) => {
   useEffect(() => {
     const fetchWalletData = async () => {
       try {
+        setLoading(true);
         const userInfo = JSON.parse(localStorage.getItem('user'));
         if (!userInfo || !userInfo.token) {
           setError('You need to be logged in');
@@ -31,6 +32,11 @@ const EscrowFundForm = ({ partnershipId, onFundsTransferred }) => {
     };
 
     fetchWalletData();
+    // Re-fetch wallet every 5 seconds while this component is open
+    const intervalId = setInterval(fetchWalletData, 5000);
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleTransferToEscrow = async (e) => {
