@@ -1,7 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Avatar,
+  CircularProgress,
+  Paper,
+  IconButton,
+  InputAdornment,
+  Divider,
+  Alert
+} from '@mui/material';
+import {
+  Send as SendIcon,
+  RefreshRounded as RefreshIcon,
+  SentimentSatisfiedAlt as EmojiIcon
+} from '@mui/icons-material';
 import ChatMessage from './ChatMessage';
+import './Chat.css';
 
 const Chat = ({ partnershipId }) => {
   const [messages, setMessages] = useState([]);
@@ -163,61 +183,173 @@ const Chat = ({ partnershipId }) => {
   };
 
   if (loading) {
-    return <div className="loading-chat">Loading messages...</div>;
+    return (
+      <Box 
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        height="300px"
+        className="loading-chat-mui"
+      >
+        <CircularProgress size={24} color="primary" sx={{ mr: 2 }} />
+        <Typography variant="body2" color="text.secondary">
+          Loading messages...
+        </Typography>
+      </Box>
+    );
   }
 
   if (error) {
     return (
-      <div className="chat-error">
-        <p>{error}</p>
-        <button onClick={fetchMessages} className="btn btn-primary">Try Again</button>
-      </div>
+      <Box className="chat-error-mui" p={4} textAlign="center">
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          startIcon={<RefreshIcon />} 
+          onClick={fetchMessages}
+        >
+          Try Again
+        </Button>
+      </Box>
     );
   }
 
   const userInfo = JSON.parse(localStorage.getItem('user'));
 
   return (
-    <div className="chat-container">
+    <Box className="chat-container-mui">
       {partnerInfo && (
-        <div className="chat-header-info">
-          <h3>Chatting with: {partnerInfo.name}</h3>
-        </div>
+        <Box className="chat-header-info-mui" px={3} py={2}>
+          <Box display="flex" alignItems="center" gap={1.5}>
+            <Avatar 
+              src={partnerInfo.avatar} 
+              alt={partnerInfo.name}
+              sx={{ 
+                width: 40, 
+                height: 40,
+                bgcolor: 'primary.main' 
+              }}
+            >
+              {partnerInfo.name ? partnerInfo.name.charAt(0).toUpperCase() : '?'}
+            </Avatar>
+            <Box>
+              <Typography variant="subtitle1" fontWeight={500}>
+                {partnerInfo.name}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {partnerInfo.isOnline ? 'Online' : 'Offline'}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
       )}
       
-      <div 
-        className="messages-container"
+      <Divider />
+      
+      <Box 
+        className="messages-container-mui"
         ref={chatContainerRef}
+        p={2}
       >
-        {messages.length === 0 ? (
-          <div className="no-messages">
-            <p>No messages yet. Start the conversation!</p>
-          </div>
-        ) : (
-          messages.map(message => (
-            <ChatMessage
-              key={message._id}
-              message={message}
-              isOwnMessage={message.sender._id === userInfo._id}
-            />
-          ))
-        )}
+        <AnimatePresence>
+          {messages.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="no-messages-mui"
+            >
+              <Paper elevation={0} sx={{ 
+                p: 3, 
+                bgcolor: 'background.paper', 
+                maxWidth: 320,
+                mx: 'auto',
+                borderRadius: 2
+              }}>
+                <Typography align="center" color="text.secondary" sx={{ mb: 1 }}>
+                  No messages yet
+                </Typography>
+                <Typography align="center" variant="body2" color="text.secondary">
+                  Start the conversation with your accountability partner!
+                </Typography>
+              </Paper>
+            </motion.div>
+          ) : (
+            <Box>
+              {messages.map((message, index) => (
+                <motion.div
+                  key={message._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ 
+                    duration: 0.2,
+                    delay: index > messages.length - 3 ? 0.05 : 0 // Only animate recent messages 
+                  }}
+                >
+                  <ChatMessage
+                    message={message}
+                    isOwnMessage={message.sender._id === userInfo._id}
+                    partnerInfo={!(message.sender._id === userInfo._id) ? partnerInfo : null}
+                  />
+                </motion.div>
+              ))}
+            </Box>
+          )}
+        </AnimatePresence>
         <div ref={messagesEndRef} />
-      </div>
+      </Box>
 
-      <form onSubmit={handleSend} className="message-form">
-        <input
-          type="text"
+      <Box 
+        component="form" 
+        onSubmit={handleSend} 
+        className="message-form-mui"
+        px={2}
+        py={1.5}
+      >
+        <TextField
+          fullWidth
+          placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
+          variant="outlined"
+          size="small"
           disabled={sending}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton 
+                  color="primary"
+                  disabled={sending || !newMessage.trim()}
+                  type="submit"
+                  sx={{ 
+                    transform: 'scale(1)', 
+                    transition: 'transform 0.2s',
+                    '&:hover': { transform: 'scale(1.05)' } 
+                  }}
+                >
+                  <SendIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconButton color="default" size="small">
+                  <EmojiIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+            sx: { 
+              borderRadius: '24px',
+              '& fieldset': { borderColor: 'rgba(0, 0, 0, 0.1)' },
+              pr: 0.5
+            }
+          }}
         />
-        <button type="submit" disabled={sending || !newMessage.trim()}>
-          {sending ? 'Sending...' : 'Send'}
-        </button>
-      </form>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
