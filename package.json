@@ -1,0 +1,23 @@
+{
+  "name": "accountability-partner-platform",
+  "version": "1.0.0",
+  "description": "Full-stack platform for matching accountability partners",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "keywords": [
+    "react",
+    "node",
+    "express",
+    "mongodb",
+    "accountability"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 
