@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Message = require('../models/messageModel');
 const Partnership = require('../models/partnershipModel');
 const { filterContent } = require('../utils/contentFilter');
+const axios = require('axios');
 
 // @desc    Send a message
 // @route   POST /api/messages
@@ -32,7 +33,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   // Filter content
-  const { filteredContent, filterReason, isFiltered } = filterContent(content);
+  const { filteredContent, filterReason, isFiltered, penaltyAmount, originalContent } = filterContent(content);
 
   // Create message
   const message = await Message.create({
@@ -46,6 +47,30 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   // Populate sender info
   await message.populate('sender', 'name');
+
+  // If content was filtered, create a moderation record asynchronously
+  if (isFiltered) {
+    try {
+      // We're using internal API call here to avoid circular dependencies
+      await axios.post(`${req.protocol}://${req.get('host')}/api/moderation/flag`, {
+        messageId: message._id,
+        violationType: filterReason,
+        originalContent,
+        filteredContent,
+        penaltyAmount
+      }, {
+        headers: {
+          Authorization: `Bearer ${req.headers.authorization.split(' ')[1]}`
+        }
+      });
+      
+      console.log(`Moderation record created for message ${message._id}`);
+    } catch (error) {
+      console.error('Error creating moderation record:', error.message);
+      // We don't want to fail the message send if moderation fails
+      // In a production app, you might want to log this to a monitoring system
+    }
+  }
 
   res.status(201).json(message);
 });
@@ -147,9 +172,22 @@ const getUnreadCount = asyncHandler(async (req, res) => {
   res.status(200).json({ count });
 });
 
+// @desc    Get filtered message count for a user
+// @route   GET /api/messages/filtered/count
+// @access  Private
+const getFilteredCount = asyncHandler(async (req, res) => {
+  const count = await Message.countDocuments({
+    sender: req.user.id,
+    isFiltered: true
+  });
+
+  res.status(200).json({ count });
+});
+
 module.exports = {
   sendMessage,
   getPartnershipMessages,
   markMessagesAsRead,
-  getUnreadCount
+  getUnreadCount,
+  getFilteredCount
 }; 

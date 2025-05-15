@@ -62,6 +62,7 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
       interests: user.interests,
       skills: user.skills,
+      isAdmin: user.isAdmin,
       token: generateToken(user._id),
     });
   } else {
@@ -167,6 +168,23 @@ const getInterestCategories = asyncHandler(async (req, res) => {
   res.json(interestCategories);
 });
 
+// @desc    Check if user is admin
+// @route   GET /api/users/check-admin
+// @access  Private
+const checkAdminStatus = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+  
+  res.json({
+    isAdmin: user.isAdmin,
+    message: user.isAdmin ? 'User has admin privileges' : 'User does not have admin privileges'
+  });
+});
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, JWT_SECRET, {
@@ -180,4 +198,5 @@ module.exports = {
   getUserProfile,
   updateUserProfile,
   getInterestCategories,
+  checkAdminStatus,
 }; 
