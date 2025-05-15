@@ -308,4 +308,147 @@
   .notification-actions {
     flex-wrap: wrap;
   }
+}
+
+.notifications-page-mui {
+  max-width: 1000px !important;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.notifications-header-mui {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notifications-list-mui {
+  margin-top: 24px;
+}
+
+.notification-card-mui {
+  transition: all 0.3s ease !important;
+  overflow: hidden;
+}
+
+.notification-card-mui:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.notification-card-mui.unread-mui {
+  background-color: rgba(25, 118, 210, 0.03);
+}
+
+.notification-main-mui {
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.notification-main-mui:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.notification-icon-wrapper-mui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+}
+
+.notification-icon-mui {
+  font-size: 24px !important;
+}
+
+.notification-title-mui {
+  font-weight: 600 !important;
+  color: #212121;
+}
+
+.notification-message-mui {
+  color: #666 !important;
+  margin: 8px 0 !important;
+  line-height: 1.5 !important;
+}
+
+.notification-badge-new {
+  font-size: 10px !important;
+  height: 20px !important;
+}
+
+.empty-state-mui {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 40px !important;
+}
+
+/* Animation styles */
+.MuiTabs-indicator {
+  height: 3px !important;
+  border-radius: 3px !important;
+}
+
+.notification-actions-mui button {
+  transition: all 0.2s ease-in-out !important;
+}
+
+.notification-actions-mui button:hover {
+  transform: translateY(-2px);
+}
+
+/* Tab scrolling styles */
+.MuiTabs-scrollButtons.Mui-disabled {
+  opacity: 0.3 !important;
+}
+
+.MuiTab-root {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  min-width: auto !important;
+  padding: 12px 16px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .notifications-header-mui {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .notifications-page-mui {
+    padding: 16px 12px;
+  }
+  
+  .notification-icon-wrapper-mui {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .notification-icon-mui {
+    font-size: 20px !important;
+  }
+  
+  .notification-actions-mui {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-main-mui {
+    flex-direction: column;
+  }
+  
+  .notification-icon-wrapper-mui {
+    margin-bottom: 12px;
+  }
+  
+  .MuiTab-root {
+    padding: 8px 12px !important;
+    min-height: 48px !important;
+  }
 } 
