@@ -2,7 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import { 
+  Container, 
+  Typography, 
+  Box, 
+  Tab, 
+  Tabs, 
+  Button, 
+  Paper, 
+  CircularProgress, 
+  Divider,
+  Alert,
+  Badge
+} from '@mui/material';
+import {
+  AddTask as AddTaskIcon,
+  Assignment as AssignmentIcon,
+  Create as CreateIcon,
+  Error as ErrorIcon
+} from '@mui/icons-material';
 import TaskList from '../components/TaskList';
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 }
+};
 
 const MyTasks = () => {
   const [assignedTasks, setAssignedTasks] = useState([]);
@@ -154,70 +190,221 @@ const MyTasks = () => {
     }
   };
 
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
   if (loading) {
-    return <div className="loading">Loading tasks...</div>;
+    return (
+      <Box 
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        minHeight="70vh"
+      >
+        <CircularProgress size={40} />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          Loading tasks...
+        </Typography>
+      </Box>
+    );
   }
 
   if (error) {
-    return <div className="error-message">{error}</div>;
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert 
+          severity="error" 
+          sx={{ 
+            p: 2, 
+            borderRadius: 2, 
+            display: 'flex', 
+            alignItems: 'center'
+          }}
+        >
+          <ErrorIcon sx={{ mr: 1 }} />
+          <Typography variant="body1">{error}</Typography>
+        </Alert>
+      </Container>
+    );
   }
 
+  // Count tasks that need verification (completed tasks)
+  const verificationNeededCount = createdTasks.filter(
+    task => task.status === 'completed'
+  ).length;
+
   return (
-    <div className="my-tasks-page">
-      <div className="my-tasks-header">
-        <h1>My Tasks</h1>
-      </div>
-
-      <div className="tasks-tabs">
-        <button 
-          className={`tab-button ${activeTab === 'assigned' ? 'active' : ''}`}
-          onClick={() => setActiveTab('assigned')}
-        >
-          Assigned to Me ({assignedTasks.length})
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'created' ? 'active' : ''}`}
-          onClick={() => setActiveTab('created')}
-        >
-          Created by Me ({createdTasks.length})
-        </button>
-      </div>
-
-      <div className="tasks-container">
-        {activeTab === 'assigned' ? (
-          assignedTasks.length === 0 ? (
-            <div className="no-tasks card">
-              <p>You don't have any tasks assigned to you.</p>
-              <p>Tasks assigned to you by your partners will appear here.</p>
-            </div>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+        <motion.div variants={itemVariants}>
+          <Paper 
+            elevation={2} 
+            sx={{ 
+              p: 3, 
+              mb: 4, 
+              borderRadius: 2, 
+              background: 'linear-gradient(to right, #f5f7fa, #e4e7eb)',
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              justifyContent: 'space-between',
+              alignItems: { xs: 'stretch', md: 'center' }
+            }}
+          >
+            <Box>
+              <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
+                My Tasks
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Manage and track all your tasks and commitments
+              </Typography>
+            </Box>
+            
+            <Button
+              component={Link}
+              to="/partnerships"
+              variant="contained"
+              color="primary"
+              size="large"
+              startIcon={<AddTaskIcon />}
+              sx={{ 
+                mt: { xs: 2, md: 0 },
+                borderRadius: 2,
+                py: 1.2,
+                px: 3
+              }}
+            >
+              Create New Task
+            </Button>
+          </Paper>
+        </motion.div>
+        
+        <motion.div variants={itemVariants}>
+          <Box sx={{ mb: 4 }}>
+            <Tabs 
+              value={activeTab} 
+              onChange={handleTabChange}
+              variant="fullWidth"
+              sx={{ 
+                mb: 3,
+                '& .MuiTab-root': {
+                  borderRadius: '8px 8px 0 0',
+                  py: 2
+                },
+                '& .Mui-selected': {
+                  fontWeight: 600
+                }
+              }}
+            >
+              <Tab 
+                value="assigned" 
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <AssignmentIcon sx={{ mr: 1 }} />
+                    <span>Assigned to Me ({assignedTasks.length})</span>
+                  </Box>
+                } 
+              />
+              <Tab 
+                value="created" 
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Badge 
+                      badgeContent={verificationNeededCount} 
+                      color="error"
+                      sx={{ mr: 1 }}
+                    >
+                      <CreateIcon />
+                    </Badge>
+                    <span>Created by Me ({createdTasks.length})</span>
+                  </Box>
+                } 
+              />
+            </Tabs>
+          </Box>
+        </motion.div>
+        
+        <motion.div variants={itemVariants}>
+          {activeTab === 'assigned' ? (
+            assignedTasks.length === 0 ? (
+              <Paper 
+                elevation={0} 
+                sx={{ 
+                  p: 4, 
+                  borderRadius: 2, 
+                  textAlign: 'center',
+                  bgcolor: 'background.paper',
+                  border: '1px dashed rgba(0, 0, 0, 0.12)'
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
+                  You don't have any tasks assigned to you
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Tasks assigned to you by your partners will appear here
+                </Typography>
+                <Button
+                  component={Link}
+                  to="/partnerships"
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<AddTaskIcon />}
+                >
+                  Find Partnerships
+                </Button>
+              </Paper>
+            ) : (
+              <TaskList 
+                tasks={assignedTasks}
+                onComplete={handleCompleteTask}
+                userId={userId}
+              />
+            )
           ) : (
-            <TaskList 
-              tasks={assignedTasks}
-              onComplete={handleCompleteTask}
-              userId={userId}
-            />
-          )
-        ) : (
-          createdTasks.length === 0 ? (
-            <div className="no-tasks card">
-              <p>You haven't created any tasks yet.</p>
-              <p>Go to a partnership to create tasks for your accountability partner.</p>
-              <Link to="/partnerships" className="btn btn-primary">
-                Go to Partnerships
-              </Link>
-            </div>
-          ) : (
-            <TaskList 
-              tasks={createdTasks}
-              onVerify={handleVerifyTask}
-              onFail={handleFailTask}
-              onDelete={handleDeleteTask}
-              userId={userId}
-            />
-          )
-        )}
-      </div>
-    </div>
+            createdTasks.length === 0 ? (
+              <Paper 
+                elevation={0} 
+                sx={{ 
+                  p: 4, 
+                  borderRadius: 2, 
+                  textAlign: 'center',
+                  bgcolor: 'background.paper',
+                  border: '1px dashed rgba(0, 0, 0, 0.12)'
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
+                  You haven't created any tasks yet
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Go to a partnership to create tasks for your accountability partner
+                </Typography>
+                <Button
+                  component={Link}
+                  to="/partnerships"
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddTaskIcon />}
+                >
+                  Go to Partnerships
+                </Button>
+              </Paper>
+            ) : (
+              <TaskList 
+                tasks={createdTasks}
+                onVerify={handleVerifyTask}
+                onFail={handleFailTask}
+                onDelete={handleDeleteTask}
+                userId={userId}
+              />
+            )
+          )}
+        </motion.div>
+      </Container>
+    </motion.div>
   );
 };
 
