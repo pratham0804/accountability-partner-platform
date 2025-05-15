@@ -1,0 +1,25 @@
+## GitHub Contribution Strategy
+
+To maximize your GitHub contribution graph:
+
+1. **Commit Frequently**: Make small, focused commits rather than large ones
+2. **Commit Daily**: Make at least one commit every day
+3. **Create Multiple Repos**: Split your project into multiple repositories (frontend, backend, documentation)
+4. **Use Branches**: Create branches for features and merge them with pull requests
+5. **Write Tests**: Add test files for your components and APIs
+6. **Add Documentation**: Create markdown files explaining various aspects of your project
+7. **Refactor Code**: Refactor and improve code quality as separate commits
+8. **Fix Bugs**: Document bug fixes as separate commits
+
+For each task prompt above, create multiple commits focusing on different aspects of the implementation. For example, when implementing the user authentication system:
+
+1. Commit initial route setup
+2. Commit user model creation
+3. Commit password hashing implementation
+4. Commit JWT token generation
+5. Commit validation logic
+6. Commit error handling
+7. Commit tests for authentication
+8. Commit documentation for the auth system
+
+This approach will result in 8+ contributions to your GitHub graph from just one feature implementation.

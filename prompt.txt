@@ -1,0 +1,138 @@
+# Accountability Partner Platform Development Prompts
+
+This document contains a sequential set of prompts to guide the development of an accountability partner platform using Cursor AI. Each prompt follows the pattern of building backend first, creating minimal frontend, integrating, testing, and finally enhancing UI.
+
+## Project Setup
+
+```
+I want to set up a new accountability partner web application. Let's create the initial project structure with Node.js/Express for backend and React for frontend. Create the necessary configuration files, folder structure, and basic setup for both. Set up MongoDB connection for the backend. Include essential packages in package.json for both backend and frontend.
+```
+
+## User Authentication System
+
+```
+Let's build the user authentication system. For the backend, create Express routes and controllers for user registration and login. Implement JWT authentication. Store user data in MongoDB with properly hashed passwords. Ensure the user model includes fields for interests/skills to enable partner matching. Then create a minimal frontend with registration and login forms. Test the integration to ensure users can register, login, and receive authentication tokens.
+```
+
+## User Profile & Interest Management
+
+```
+Now let's build the user profile system. For the backend, create API endpoints to manage user profiles, including updating interests, skills, and preferences. Store these in the user model. Implement interest categories and tags for precise matching. Then build a minimal frontend profile page where users can select interests from predefined categories and add custom tags. Test that users can update their profiles and the data is correctly stored.
+```
+
+## Partner Matching System
+
+```
+Let's implement the partner matching algorithm. On the backend, create an endpoint that finds potential accountability partners based on shared interests/skills. Implement a scoring system that ranks potential matches by compatibility. Create a MongoDB index to optimize search. Then build a simple frontend interface that displays potential matches with their interests (keeping identities anonymous) and allows users to request partnerships. Test that the matching provides relevant results based on user interests.
+```
+
+## Partnership Formation & Agreement System
+
+```
+Now we'll implement the partnership formation system. Create backend endpoints for sending/accepting partnership requests and establishing agreements. Design a partnership model that stores the participants, agreement terms, and financial stakes. Then create a minimal frontend for users to send requests, accept/reject them, and set up agreements including financial stakes and duration. Test the complete flow from matching to partnership formation.
+```
+
+## Wallet & Escrow System
+
+```
+Let's build the wallet and escrow system. For the backend, create models and controllers to manage user wallets, transactions, and funds held in escrow for agreements. Implement endpoints for deposit, withdrawal, and transferring funds to escrow when agreements are formed. Then build a simple frontend wallet interface showing balance, transaction history, and options to add/withdraw funds. Create UI elements for committing funds to agreements. Test the complete flow of funds from deposit to escrow.
+```
+
+## Task Management System
+
+```
+Now let's implement the task management system. Create backend models and endpoints for creating tasks, updating their status, and linking them to partnerships. Include fields for deadlines, descriptions, and completion status. Then build a minimal frontend for users to create tasks, view their tasks and partner tasks, and mark tasks as complete. Test that tasks can be created, updated, and properly linked to partnerships.
+```
+
+## Proof Submission & Verification System
+
+```
+Let's build the proof submission system. Create backend endpoints for uploading proof of task completion (images, links, text descriptions). Design a model to store proofs with references to tasks. Implement basic verification rules. Then create a simple frontend for users to submit different types of proof and for partners to review submitted proofs. Test the complete flow from proof submission to partner verification.
+```
+
+## Third-Party Integration for Proof Verification
+
+```
+Now let's enhance proof verification with third-party integrations. Create backend services to connect with GitHub, fitness apps, learning platforms, etc. to automatically verify certain types of activities. Create endpoints to request and store these verifications. Then build a simple frontend that allows users to connect their accounts and select activities for automatic verification. Test integration with at least one external service (like GitHub).
+```
+
+## Chat & Communication System
+
+```
+Let's implement the anonymous chat system. Create backend endpoints for sending/receiving messages between partners, with message storage in MongoDB. Implement a basic content filter to prevent sharing of personal contact information. Then build a minimal chat interface for the frontend that allows partners to communicate. Test message sending/receiving and verify that the content filter works correctly.
+```
+
+## Content Moderation System
+
+```
+Now let's enhance the content moderation system. Create backend services to scan messages for inappropriate content, personal information, or external contact details. Implement a flagging and penalty system. Update the chat model to include moderation status. Then create simple frontend notifications for when messages are flagged or penalties applied. Test that the system correctly identifies and handles violations.
+```
+
+## Agreement Resolution & Reward/Penalty System
+
+```
+Let's implement the agreement resolution system. Create backend logic to evaluate completed and failed tasks at the end of an agreement period, calculate rewards and penalties, and transfer funds accordingly. Then build a simple frontend to display agreement results, including success rates and fund transfers. Test the complete flow from agreement completion to fund disbursement.
+```
+
+## Dashboard & Statistics
+
+```
+Now let's create a user dashboard. Build backend endpoints that aggregate user statistics, active agreements, success rates, and other meaningful metrics. Then create a frontend dashboard that visualizes this data in a clear, minimal interface. Include charts for completion rates and other metrics. Test that the dashboard correctly displays all relevant user data.
+```
+
+## Notifications System
+
+```
+Let's implement the notifications system. Create backend services to generate and store notifications for key events (new partnership requests, task deadlines, proof submissions, chat messages). Implement both in-app and email notifications. Then build a simple frontend notifications center and integrate notification indicators throughout the UI. Test that notifications are generated and delivered correctly.
+```
+
+## Admin Panel
+
+```
+Now let's build a basic admin panel. Create backend endpoints for admin users to view platform statistics, moderate flagged content, and manage user accounts. Then build a simple admin frontend with pages for user management, content moderation, and platform statistics. Test admin functionality for managing the platform.
+```
+
+## UI Enhancement & Responsiveness
+
+```
+Now that all functional components are working, let's enhance the UI. Improve the styling and layout of all pages, ensuring a consistent design language. Implement responsive design to support mobile devices. Add animations and transitions for better user experience. Test the application on multiple screen sizes and browsers.
+```
+
+## Final Testing & Deployment Preparation
+
+```
+Let's perform comprehensive testing of the entire application. Create test scripts for key user flows. Identify and fix any bugs or performance issues. Optimize database queries and frontend loading. Prepare the application for deployment by setting up environment configurations. Document the deployment process.
+```
+
+## Specific Technical Implementation Prompts
+
+### Setting Up MongoDB Models
+
+```
+Help me design comprehensive MongoDB models for our accountability platform. We need User, Partnership, Task, Proof, Wallet, Transaction, and Message models. Include all necessary fields, relationships, and indexes for efficient queries. The User model should store interests but maintain anonymity. The Partnership model should track the agreement terms and financial stakes. Tasks should link to partnerships and include verification status.
+```
+
+### Building the Matching Algorithm
+
+```
+Help me implement the partner matching algorithm. We need to find users with similar interests but also consider factors like activity level and availability. Users should be able to set preferences for the type of accountability partner they want. Design a scoring system that ranks potential matches by compatibility and provides at least 5 potential matches to choose from.
+```
+
+### Implementing Secure Wallet System
+
+```
+Help me implement a secure wallet system for our accountability platform. Users need to be able to deposit funds (simulated), place them in escrow for agreements, and receive rewards or penalties. Implement proper transaction logs and balance checks. Ensure that funds in escrow cannot be withdrawn until an agreement concludes.
+```
+
+### Creating Proof Verification Logic
+
+```
+Help me design the proof verification system. We need to support multiple types of proof: images, links to completed work, integration with platforms like GitHub, and time tracking logs. Implement validation rules for each proof type. Create a review system where partners can approve or dispute submitted proofs.
+```
+
+### Building Content Moderation System
+
+```
+Help me implement the content moderation system for our chat feature. We need to prevent users from sharing personal contact information or engaging in inappropriate conversations. Create a filter that detects phone numbers, email addresses, social media handles, and inappropriate content. Implement a penalty system that deducts small amounts from user wallets for violations.
+```
+
