@@ -1,3 +1,4 @@
+/* Legacy styles - keeping for reference but will be replaced by MUI styles */
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -9,27 +10,62 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.chat-header-info {
-  background-color: #3498db;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.chat-header-info h3 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 15px;
+/* Material UI enhanced styles */
+.chat-container-mui {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  background-color: #fff;
+  overflow: hidden;
 }
 
+.chat-header-info-mui {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.messages-container-mui {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f5f7f9;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.messages-container-mui::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container-mui::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-container-mui::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.no-messages-mui {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 300px;
+}
+
+.message-form-mui {
+  background-color: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .message-form-mui {
+    padding: 8px 12px !important;
+  }
+}
+
+/* Keep legacy chat message styles until ChatMessage component is updated */
 .chat-message {
   max-width: 70%;
   margin-bottom: 15px;
