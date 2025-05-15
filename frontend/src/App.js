@@ -23,6 +23,7 @@ import ModerationDashboard from './pages/ModerationDashboard';
 import NotificationsPage from './pages/NotificationsPage';
 import { NotificationProvider } from './contexts/NotificationContext';
 import './App.css';
+import './styles/svg-fix.css';
 
 function App() {
   return (
